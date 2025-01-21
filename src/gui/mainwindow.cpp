@@ -13,9 +13,10 @@ MainWindow::MainWindow()
 {
     this->titlebar()->setSeparatorVisible(false);
     this->titlebar()->setAutoHideOnFullscreen(true);
-    this->titlebar()->setIcon(QIcon(":/image/logo.png"));
+    this->titlebar()->setIcon(QIcon(":asset/image/logo.png"));
     this->titlebar()->setTitle("Muiltimedia Player");
     this->titlebar()->setFixedHeight(60);
+    this->setWindowRadius (10);
     this->setMinimumSize(QSize(900, 600));
     moveToCenter(this); //把窗口移动到屏幕中间
     //把主窗口分为上下两个垂直布局
