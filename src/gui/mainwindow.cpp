@@ -13,7 +13,7 @@ MainWindow::MainWindow()
 {
     this->titlebar()->setSeparatorVisible(false);
     this->titlebar()->setAutoHideOnFullscreen(true);
-    this->titlebar()->setIcon(QIcon(":/image/logo.png"));
+    this->titlebar()->setIcon(QIcon(":asset/image/logo.png"));
     this->titlebar()->setTitle("Muiltimedia Player");
     this->titlebar()->setFixedHeight(60);
     this->setMinimumSize(QSize(900, 600));

@@ -21,8 +21,8 @@ NavWidget::NavWidget()
 
     };
 
-    AddItems( QIcon(":/image/music.png"),"Music");
-    AddItems(QIcon(":/image/video.png"),"Video");
+    AddItems( QIcon(":asset/image/music.png"),"Music");
+    AddItems(QIcon(":asset/image/video.png"),"Video");
     ListView1->setModel(model);
     VLayoutLeft->addSpacing(5);
     VLayoutLeft->addWidget(label1);
