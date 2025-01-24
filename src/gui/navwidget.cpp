@@ -28,8 +28,9 @@ NavWidget::NavWidget()
     VLayoutLeft->addWidget(label1);
     VLayoutLeft->addSpacing(10);
     VLayoutLeft->addWidget(ListView1);
+
     ListView1->setItemSpacing(0);
 
-
+    VLayoutLeft->addStretch(100);
 
 }

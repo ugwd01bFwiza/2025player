@@ -8,6 +8,14 @@
 #include <DWidgetUtil>
 #include<DPaletteHelper>
 #include<DScrollArea>
+MainWindow::~MainWindow() {
+    delete cw;
+    delete Navw;
+    delete MainVLayout;
+    delete UpHLayout;
+    delete DownHLayout;
+    delete RightHLayout;
+}
 MainWindow::MainWindow()
 
 {
@@ -18,11 +26,13 @@ MainWindow::MainWindow()
     this->titlebar()->setFixedHeight(60);
     this->setWindowRadius (10);
     this->setMinimumSize(QSize(900, 600));
+    Navw->setAutoFillBackground(true);
+    cbar->setAutoFillBackground(true);
+
     moveToCenter(this); //把窗口移动到屏幕中间
     //把主窗口分为上下两个垂直布局
 
-    DPushButton *ts=new DPushButton(cw);
-    ts->setText("控制栏");
+    ;
 
     cw->setLayout(MainVLayout);
 
@@ -34,8 +44,8 @@ MainWindow::MainWindow()
     UpHLayout->addLayout(RightHLayout);
 
 
-    Navw->setAutoFillBackground(true);
-    DownHLayout->addWidget(ts);
+
+    DownHLayout->addWidget(cbar);
 
     UpHLayout->setStretch(0, 2);
     UpHLayout->setStretch(1, 7);
@@ -58,10 +68,13 @@ void MainWindow::setTheme(DGuiApplicationHelper::ColorType theme)
         QPalette palette = this->palette();
         palette.setColor(QPalette::Background,Qt::white);
         Navw->setPalette(palette);
+        palette.setColor(QPalette::Base,Qt::white);
+        cbar->setPalette(palette);
     }else {
         QPalette palette = this->palette();
         palette.setColor(QPalette::Background,Qt::black);
         Navw->setPalette(palette);
+        cbar->setPalette(palette);
     }
 }
 void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &previous)
@@ -72,20 +85,21 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
         while (QLayoutItem *item = RightHLayout->takeAt(0)){
             QWidget *widget = item->widget();
                    if (widget) {
-                       widget->deleteLater();  // 延迟删除控件
+                       widget->deleteLater();
                    }
         }
     }
     if (row==0)
     {
         //todo scrollarea
-        DPushButton *ts2=new DPushButton(this->listshow);
-        ts2->setText("视频");
+        DPushButton *ts2=new DPushButton(this);
+        ts2->setStyleSheet("background: transparent;");
+
         RightHLayout->addWidget(ts2);
     }
     else if(row==1){
         //todo scrollarea
-        DPushButton *ts2=new DPushButton(this->listshow);
+        DPushButton *ts2=new DPushButton(this);
         ts2->setText("音频");
         RightHLayout->addWidget(ts2);
     }

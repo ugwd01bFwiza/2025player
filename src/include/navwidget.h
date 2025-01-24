@@ -1,7 +1,6 @@
 #ifndef NAVWIDGET_H
 #define NAVWIDGET_H
-#include<DWidget>
-#include <DMainWindow>
+
 #include<DListView>
  DWIDGET_USE_NAMESPACE
  //最左边导航栏

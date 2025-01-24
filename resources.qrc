@@ -3,5 +3,14 @@
         <file>asset/image/logo.png</file>
         <file>asset/image/music.png</file>
         <file>asset/image/video.png</file>
+        <file>asset/image/fscreen.PNG</file>
+        <file>asset/image/fvolume.PNG</file>
+        <file>asset/image/mscreen.PNG</file>
+        <file>asset/image/next.PNG</file>
+        <file>asset/image/pause.PNG</file>
+        <file>asset/image/play.PNG</file>
+        <file>asset/image/previous.PNG</file>
+        <file>asset/image/stop.PNG</file>
+        <file>asset/image/zvolume.PNG</file>
     </qresource>
 </RCC>

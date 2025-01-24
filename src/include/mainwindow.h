@@ -1,6 +1,7 @@
 #ifndef MainWindow_H
 #define MainWindow_H
 #include "navwidget.h"
+#include<controlbar.h>
 #include <DMainWindow>
 #include <DGuiApplicationHelper>//用来适配深色模式
 #include<QVBoxLayout>
@@ -10,11 +11,11 @@ class MainWindow : public DMainWindow
     Q_OBJECT
 public:
     MainWindow();
-
+    ~MainWindow();
 private:
-    QWidget *cw = new QWidget(this);
-    QWidget *listshow=new QWidget(this);
+    QWidget *cw = new QWidget();
     NavWidget *Navw = new  NavWidget;
+    ControlBar * cbar = new ControlBar(this);
     QVBoxLayout* MainVLayout = new QVBoxLayout;
     QHBoxLayout* UpHLayout = new QHBoxLayout;
     QHBoxLayout* DownHLayout = new QHBoxLayout;
