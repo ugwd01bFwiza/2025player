@@ -8,14 +8,17 @@ TEMPLATE = app
 SOURCES +=src/main.cpp \
       src/gui/mainwindow.cpp \
       src/gui/navwidget.cpp \
-    src/gui/controlbar.cpp
+    src/gui/controlbar.cpp \
+    src/gui/mediatable.cpp
+
 
 RESOURCES +=         resources.qrc
 INCLUDEPATH += $$PWD/src/include
 
 HEADERS +=src/include/mainwindow.h \
     src/include/navwidget.h \
-    src/include/controlbar.h
+    src/include/controlbar.h \
+    src/include/musictable.h
 
 DISTFILES +=
 

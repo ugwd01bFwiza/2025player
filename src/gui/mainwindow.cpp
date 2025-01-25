@@ -91,16 +91,14 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
     }
     if (row==0)
     {
-        //todo scrollarea
-        DPushButton *ts2=new DPushButton(this);
-        ts2->setStyleSheet("background: transparent;");
 
-        RightHLayout->addWidget(ts2);
+        MusicTable *mediatable = new MusicTable(this);
+        RightHLayout->addWidget(mediatable);
     }
     else if(row==1){
         //todo scrollarea
         DPushButton *ts2=new DPushButton(this);
-        ts2->setText("音频");
+        ts2->setText("视频");
         RightHLayout->addWidget(ts2);
     }
 }
