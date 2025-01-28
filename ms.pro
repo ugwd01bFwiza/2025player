@@ -1,4 +1,14 @@
 QT += core gui dtkwidget
+QT += multimedia
+
+INCLUDEPATH += /usr/include/taglib /usr/include/taglib-extras
+
+LIBS += -L/usr/lib -ltag
+
+
+QMAKE_CXXFLAGS += -I /usr/include/taglib -I /usr/include/taglib-extras
+QMAKE_LIBS += -ltag
+
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,10 +19,10 @@ SOURCES +=src/main.cpp \
       src/gui/mainwindow.cpp \
       src/gui/navwidget.cpp \
     src/gui/controlbar.cpp \
-    src/gui/mediatable.cpp
+    src/gui/musictable.cpp
 
 
-RESOURCES +=         resources.qrc
+RESOURCES += resources.qrc
 INCLUDEPATH += $$PWD/src/include
 
 HEADERS +=src/include/mainwindow.h \
@@ -22,10 +32,12 @@ HEADERS +=src/include/mainwindow.h \
 
 DISTFILES +=
 
-debug {
-    DESTDIR = build/debug/
+debug{
+DESTDIR = build/debug/
+}
+release{
+DESTDIR = build/release/
 }
 
-release {
-    DESTDIR = build/release/
-}
+
+

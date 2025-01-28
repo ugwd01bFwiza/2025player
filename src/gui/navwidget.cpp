@@ -4,7 +4,7 @@
 #include<QVBoxLayout>
 NavWidget::NavWidget()
 {
-
+    ListView1->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     this->setAutoFillBackground(true);
     auto VLayoutLeft = new QVBoxLayout(this);
     DLabel *label1 = new DLabel(this);
@@ -24,6 +24,7 @@ NavWidget::NavWidget()
     AddItems( QIcon(":asset/image/music.png"),"Music");
     AddItems(QIcon(":asset/image/video.png"),"Video");
     ListView1->setModel(model);
+
     VLayoutLeft->addSpacing(5);
     VLayoutLeft->addWidget(label1);
     VLayoutLeft->addSpacing(10);

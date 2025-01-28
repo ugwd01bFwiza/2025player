@@ -32,7 +32,7 @@ MainWindow::MainWindow()
     moveToCenter(this); //把窗口移动到屏幕中间
     //把主窗口分为上下两个垂直布局
 
-    ;
+
 
     cw->setLayout(MainVLayout);
 
@@ -102,3 +102,4 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
         RightHLayout->addWidget(ts2);
     }
 }
+

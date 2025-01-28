@@ -11,8 +11,8 @@ ControlBar::ControlBar(QWidget *parent) : QWidget(parent)
     QPalette qp = parent->palette();
     qp.setColor(QPalette::Background, Qt::transparent);
     QVBoxLayout* MainVlayout = new QVBoxLayout(this);
-    QHBoxLayout* UpHlayout = new QHBoxLayout(this);
-    QHBoxLayout* DownHlayout = new QHBoxLayout(this);
+    QHBoxLayout* UpHlayout = new QHBoxLayout();
+    QHBoxLayout* DownHlayout = new QHBoxLayout();
     DLabel*playtime = new DLabel(this);
     DLabel* endtime = new DLabel(this);
     DSlider* slider=new DSlider (Qt::Horizontal,this);
