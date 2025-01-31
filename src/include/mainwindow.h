@@ -24,9 +24,11 @@ private:
     QHBoxLayout* DownHLayout = new QHBoxLayout;
     QHBoxLayout* RightHLayout = new QHBoxLayout;   
     QMediaPlayer *player = new QMediaPlayer(this);
+
+public slots:
     void setTheme(DGuiApplicationHelper::ColorType);
     void currentchange(const QModelIndex &current,const QModelIndex &previous);
 
 };
 
-#endif // MUSIWINDOW_H
+#endif // MAINWINDOW_H

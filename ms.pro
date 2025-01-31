@@ -1,6 +1,6 @@
 QT += core gui dtkwidget
 QT += multimedia
-
+QT += quick
 INCLUDEPATH += /usr/include/taglib /usr/include/taglib-extras
 
 LIBS += -L/usr/lib -ltag
@@ -19,7 +19,8 @@ SOURCES +=src/main.cpp \
       src/gui/mainwindow.cpp \
       src/gui/navwidget.cpp \
     src/gui/controlbar.cpp \
-    src/gui/musictable.cpp
+    src/gui/musictable.cpp \
+    src/play/musicplayer.cpp
 
 
 RESOURCES += resources.qrc
@@ -28,7 +29,8 @@ INCLUDEPATH += $$PWD/src/include
 HEADERS +=src/include/mainwindow.h \
     src/include/navwidget.h \
     src/include/controlbar.h \
-    src/include/musictable.h
+    src/include/musictable.h \
+    src/include/musicplayer.h
 
 DISTFILES +=
 

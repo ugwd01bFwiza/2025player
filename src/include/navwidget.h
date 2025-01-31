@@ -12,4 +12,4 @@ public:
     DListView *ListView1=new DListView(this);
 };
 
-#endif // NAVWWIDGET_H
+#endif // NAVWIDGET_H

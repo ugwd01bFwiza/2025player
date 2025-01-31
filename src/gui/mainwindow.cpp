@@ -68,7 +68,7 @@ void MainWindow::setTheme(DGuiApplicationHelper::ColorType theme)
         QPalette palette = this->palette();
         palette.setColor(QPalette::Background,Qt::white);
         Navw->setPalette(palette);
-        palette.setColor(QPalette::Base,Qt::white);
+
         cbar->setPalette(palette);
     }else {
         QPalette palette = this->palette();

@@ -1,36 +1,31 @@
 #ifndef MEDIATABLE_H
 #define MEDIATABLE_H
-#include<QMediaPlayer>
+#include"musicplayer.h"
 #include<QDir>
-#include <QMediaPlaylist>
 #include<DTableWidget>
 #include<QStandardItemModel>
+#include<QWidget>
+#include<DListView>
  DWIDGET_USE_NAMESPACE
- struct MMeta{
-     QString artist;
-     QString sname;
-     QString album;
-     QString filePath;
-     QPixmap covpix;
-     int duration;
-     MMeta(const QString &filePath);
- };
 
 class MusicTable : public QWidget
 {
 Q_OBJECT
 public:
     MusicTable(QWidget *parent );
-    QWidget *music = new QWidget(this);
-    QWidget *video = new QWidget (this);
     DTableWidget *music_Table;
-    QDir localdir;
-    QMediaPlaylist *playlist;
+    MusicPlayer *musicplayer;
+    void Addmusic(const MMeta&music);
+public slots:
+    void play(int row, int column);
 
-    QList<MMeta> MMetalist;
-private:
-    void ReadMediaFile();void AddSlot(QMediaPlayer::MediaStatus status);
+};
+class ListView : public DListView{
+Q_OBJECT
+public:
+    QTableWidget *tableWidget;
 
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 };
 
 #endif // MEDIATABLE_H
