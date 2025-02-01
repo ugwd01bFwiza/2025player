@@ -15,7 +15,6 @@ MusicTable::MusicTable(QWidget *parent)
     QVBoxLayout *VLayout=new QVBoxLayout ();
     music_Table = new DTableWidget(this);
     QList <QString> tableList;//
-    musicplayer = new MusicPlayer();
     //QStandardItemModel* headmodel = new QStandardItemModel;
 
 
@@ -77,9 +76,9 @@ MusicTable::MusicTable(QWidget *parent)
 
 
     VLayout->addWidget(music_Table);
-
+    auto &musicplayer=MusicPlayer::instance();
     this->setLayout(VLayout);
-    for (auto i:musicplayer->MMetalist)
+    for (auto i:musicplayer.MMetalist)
         Addmusic(i);
     connect(music_Table, &QTableWidget::cellDoubleClicked, this, &MusicTable::play);
 
@@ -112,7 +111,7 @@ void MusicTable::Addmusic(const MMeta&music){
        music_Table->setItem(row, 0, new QTableWidgetItem(rowNumber));  // 第一列为序号
 
        // 设置第二列（标题）
-       ListView *view = new ListView();
+       CustomListView *view = new CustomListView();
        view->setParent(music_Table);
        QStandardItemModel *model = new QStandardItemModel(view);
        view->setModel(model);
@@ -148,9 +147,9 @@ void MusicTable::Addmusic(const MMeta&music){
 
 }
 void MusicTable::play(int row, int _column){
-
-       this->musicplayer->locallist->setCurrentIndex(row);
-       this->musicplayer->play();
+       auto &musicplayer=MusicPlayer::instance();
+       musicplayer.locallist->setCurrentIndex(row);
+       musicplayer.play();
 
 }
 QTableWidget *findTableWidgetParent(QWidget *widget) {
@@ -161,7 +160,7 @@ QTableWidget *findTableWidgetParent(QWidget *widget) {
     }
     return nullptr;
 }
-void ListView::mouseDoubleClickEvent(QMouseEvent *event) {
+void CustomListView::mouseDoubleClickEvent(QMouseEvent *event) {
 
     // 计算当前 ListView 在 QTableWidget 中的位置
     QPoint globalPos = this->mapTo(tableWidget, QPoint(0, 0));

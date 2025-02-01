@@ -14,13 +14,18 @@ Q_OBJECT
 public:
     MusicTable(QWidget *parent );
     DTableWidget *music_Table;
-    MusicPlayer *musicplayer;
+
     void Addmusic(const MMeta&music);
 public slots:
     void play(int row, int column);
 
+
 };
-class ListView : public DListView{
+
+
+
+
+class CustomListView : public DListView{
 Q_OBJECT
 public:
     QTableWidget *tableWidget;

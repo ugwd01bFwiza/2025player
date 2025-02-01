@@ -20,6 +20,10 @@ public:
     MusicPlayer();
     QList<MMeta> MMetalist;
     QMediaPlaylist *locallist;
+    static MusicPlayer& instance() {
+            static MusicPlayer player;
+            return player;
+        }
 
 private:
     void InitLocateMusic();

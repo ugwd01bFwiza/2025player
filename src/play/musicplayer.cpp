@@ -46,10 +46,6 @@ void MusicPlayer::InitLocateMusic() {
 }
 
 
-
-
-
-
 MMeta::MMeta(const QString &filePath) {
     QFileInfo fileInfo(filePath);
     QString fileExtension = fileInfo.completeSuffix();
