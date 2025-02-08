@@ -6,20 +6,42 @@
 #include<QStandardItemModel>
 #include<QWidget>
 #include<DListView>
+#include<DPushButton>
+#include<QLabel>
+#include<QHBoxLayout>
+#include<DGuiApplicationHelper>
+#include<QFrame>
+#include<DLabel>
+#include<QListWidget>
  DWIDGET_USE_NAMESPACE
 
-class MusicTable : public QWidget
+class MusicTable : public QFrame
 {
 Q_OBJECT
 public:
-    MusicTable(QWidget *parent );
-    DTableWidget *music_Table;
+    MusicTable( );
 
+    QListWidget *title_table;
+    DPushButton *playAll;
+    DPushButton *selectDir;
+    DLabel *displayLabel[2];
+    QVBoxLayout *local_VBoxLayout;
+    QHBoxLayout *display_HBoxLayout;
+    QStackedWidget * page;
+    QFrame *qf;
     void Addmusic(const MMeta&music);
+
 public slots:
-    void play(int row, int column);
-
-
+    void play(QListWidgetItem *item);
+    void setTheme(DGuiApplicationHelper::ColorType);
+private slots:
+     void bt_playAll();
+   // void bt_selectDir();
+private:
+    void LoadStyleSheet();
+    void localMusicLayout();
+    void initLayout();
+    void initItem();
 };
 
 
@@ -28,7 +50,7 @@ public slots:
 class CustomListView : public DListView{
 Q_OBJECT
 public:
-    QTableWidget *tableWidget;
+    QListWidget *tableWidget;
 
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 };

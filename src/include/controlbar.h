@@ -5,7 +5,7 @@
 #include <DWidget>
 
 DWIDGET_USE_NAMESPACE
-class ControlBar : public QWidget
+class ControlBar : public QFrame
 {
     Q_OBJECT
 public:
@@ -17,6 +17,7 @@ public:
     DIconButton *btvolume=new DIconButton(this);
     DIconButton *btscreen=new DIconButton(this);
 
+    void LoadStyleSheet();
 public slots:
     void stchange(QMediaPlayer::State state);
     void playslot();

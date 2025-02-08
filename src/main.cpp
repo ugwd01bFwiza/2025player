@@ -12,6 +12,7 @@
 #include <QLoggingCategory>
 //#include<QTextCodec>
 #include "mainwindow.h"
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
@@ -32,11 +33,14 @@ int main(int argc, char *argv[])
     DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
     // 保存程序的窗口主题设置
     DApplicationHelper *helper = DApplicationHelper::instance();
-    Q_UNUSED(helper);
+
+
+
+
 
     MainWindow w;
 
-
+    emit helper->themeTypeChanged(helper->themeType());
     w.show();
     return a.exec();
 }

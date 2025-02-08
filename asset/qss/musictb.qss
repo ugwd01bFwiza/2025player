@@ -1,0 +1,160 @@
+QFrame#tableqf {
+    background-color: qlineargradient(
+        x1: 0, y1: 0,
+        x2: 0, y2: 1,
+        stop: 0 #f8f8f8,
+        stop: 1 white
+    );
+    border: none;
+}
+QFrame#localmusic {
+    background-color: qlineargradient(
+        x1: 0, y1: 0,
+        x2: 0, y2: 1,
+        stop: 0 #f8f8f8,
+        stop: 0.5 #f7f9fc
+    );
+    border: none;
+}
+QLabel#localLabel
+{
+font-size: 20px;
+font-weight: 550;
+border: transparent;
+}
+QLabel#numberlabel
+{
+font-size: 12px;
+color: rgb(180,180,180);
+border: transparent;
+}
+
+QPushButton#selectButton
+{
+color: #50a7ff;
+font-size: 17px;
+border: transparent;
+}
+
+QPushButton#selectButton:hover
+{
+color: blue;
+font-size: 17px;
+border: transparent;
+}
+
+QPushButton#playallBtn
+{
+background-color: rgb(255,80,80);
+border: transparent;
+color: white;
+border-radius: 10px;
+font-size: 17px;
+max-width:100px;
+
+
+}
+
+QPushButton#playallBtn:hover
+{
+background-color: rgb(220,72,57);
+border: transparent;
+color: white;
+border-radius: 10px;
+font-size: 17px;
+max-width: 100px;
+}
+
+QLineEdit#localSearch
+{
+background-color: #f3f3f3;
+color: #dcdcdc;
+border: none;
+border-radius: 12px;
+padding-left: 5px;
+}
+
+
+
+
+
+
+QPushButton#playallBtn:hover
+{
+background-color: rgb(220,72,57);
+border: transparent;
+color: white;
+border-radius: 10px;
+font-size: 17px;
+}
+
+
+QLineEdit#localSearch
+{
+background-color: #f3f3f3;
+color: #dcdcdc;
+border: none;
+border-radius: 12px;
+padding-left: 5px;
+}
+
+
+
+
+QMenu
+{
+background-color: white;
+}
+
+QMenu::item
+{
+background: white;
+padding-left: 10px;
+padding-right: 10px;
+padding-top: 4px;
+padding-bottom: 4px;
+margin: 3px 3px;
+font-size: 15px;
+}
+
+
+QMenu::icon
+{
+position: absolute;
+left: 10px;
+}
+
+
+QMenu::item:hover
+{
+background-color: rgb(220,220,220);
+
+color: black;
+}
+
+QMenu::item:selected
+{
+background-color: rgb(220,220,220);
+
+color: black;
+}
+
+
+QPushButton#default1Button
+{
+background-color: white;
+text-align: left;
+height: 30px;
+border: transparent;
+/*qproperty-icon: url(:/images/stackWidget/localMusic/btn_indeterminate.png) center;*/
+/*qproperty-iconSize: 16px 16px;*/
+margin: 3px 3px;
+}
+
+QPushButton#default1Button:checked,#default1Button:hover
+{
+/*qproperty-icon: url(:/images/stackWidget/localMusic/btn_checked.png) center;*/
+}
+
+
+

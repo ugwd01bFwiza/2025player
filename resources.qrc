@@ -12,5 +12,7 @@
         <file>asset/image/previous.PNG</file>
         <file>asset/image/stop.PNG</file>
         <file>asset/image/zvolume.PNG</file>
+        <file>asset/qss/musictb.qss</file>
+        <file>asset/qss/cbar.qss</file>
     </qresource>
 </RCC>

@@ -1,10 +1,11 @@
 #include "navwidget.h"
-
 #include<DLabel>
 #include<QVBoxLayout>
+///左侧导航栏
 NavWidget::NavWidget()
 {
-    ListView1->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
     this->setAutoFillBackground(true);
     auto VLayoutLeft = new QVBoxLayout(this);
     DLabel *label1 = new DLabel(this);
@@ -21,8 +22,9 @@ NavWidget::NavWidget()
 
     };
 
-    AddItems( QIcon(":asset/image/music.png"),"Music");
+    AddItems( QIcon(":asset/image/music.png"),"Local Music");
     AddItems(QIcon(":asset/image/video.png"),"Video");
+    ListView1->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     ListView1->setModel(model);
 
     VLayoutLeft->addSpacing(5);
@@ -33,5 +35,5 @@ NavWidget::NavWidget()
     ListView1->setItemSpacing(0);
 
     VLayoutLeft->addStretch(100);
-
+     VLayoutLeft->setContentsMargins(0,0,0,0);
 }
