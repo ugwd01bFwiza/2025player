@@ -26,7 +26,7 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     btpre->setIcon(QIcon(":/asset/image/previous.PNG"));
     btpre->setIconSize(QSize(18,18));
     btpre->setObjectName("bt_pre");
-
+    btpre->setStyleSheet("#bt_pre{ background-color: transparent;}");
 
     btstop->setIcon(QIcon(":/asset/image/stop.PNG"));
     btstop->setIconSize(QSize(18, 18));

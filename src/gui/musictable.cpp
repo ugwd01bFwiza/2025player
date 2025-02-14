@@ -73,7 +73,7 @@ void MusicTable::initItem(){
         Addmusic(i);
 
 
-    playAll = new DPushButton();
+    playAll = new DPushButton(this);
     playAll->setText("播放全部");
     playAll->setMaximumSize(100,40);
     playAll->setMinimumSize(100,40);
@@ -138,8 +138,9 @@ void MusicTable::initLayout(){
     qf->setObjectName("tableqf");
     QVBoxLayout *temp = new QVBoxLayout();
     temp->addLayout(display_HBoxLayout);
-    temp->addSpacing(20);
+    temp->addSpacing(10);
     temp->addLayout(button_HBoxLayout);
+    temp->addSpacing(10);
     qf->setLayout(temp);
     temp->setContentsMargins(10,10,0,0);
     VLayout->addWidget(qf);
@@ -148,8 +149,8 @@ void MusicTable::initLayout(){
     VLayout->setStretch(0,1);
     VLayout->setStretch(1,8);
     this->setLayout(VLayout);
-
-
+    title_table->setBackgroundRole(QPalette::NoRole);
+    title_table->setSpacing(10);
 }
 
 void MusicTable::Addmusic(const MMeta&music){

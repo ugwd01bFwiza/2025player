@@ -1,3 +1,11 @@
+DIconButton
+{
+background-color: transparent;
+}
+#bt_play{
+    background-color: transparent;
+}
+
 #bt_play:hover, #bt_pre:hover, #bt_stop:hover, #bt_next:hover, #bt_volume:hover, #bt_screen:hover {
     background-color: #f1f1f1;
 }
@@ -6,9 +14,4 @@
     background-color: #ccc;
 }
 
-#bt_play, #bt_pre, #bt_stop, #bt_next, #bt_volume, #bt_screen {
-    background-color: transparent;
-    outline: none;
-    border: none;
-}
 
