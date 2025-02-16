@@ -112,6 +112,7 @@ MMeta::MMeta(const QString &filePath) {
                 covpix.load(":/asset/image/logo.png");
                 qDebug() << "读取音乐封面信息失败";
             }
+
         }
     }
 }

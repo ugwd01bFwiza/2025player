@@ -3,6 +3,7 @@
 #include<QMediaPlayer>
 #include<QMediaPlaylist>
 #include<QWidget>
+#include <QVector>
 struct MMeta{
     QString artist;
     QString sname;
@@ -11,6 +12,9 @@ struct MMeta{
     QPixmap covpix;
     int duration;
     MMeta(const QString &filePath);
+    MMeta()
+            : artist(""), sname(""), album(""), filePath(""), covpix(), duration(3) {}
+
 };
 
 class MusicPlayer : public QMediaPlayer
@@ -18,7 +22,7 @@ class MusicPlayer : public QMediaPlayer
     Q_OBJECT
 public:
     MusicPlayer();
-    QList<MMeta> MMetalist;
+    QVector<MMeta> MMetalist;
     QMediaPlaylist *locallist;
     static MusicPlayer& instance() {
             static MusicPlayer player;

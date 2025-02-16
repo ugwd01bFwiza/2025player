@@ -23,7 +23,7 @@ MusicTable::MusicTable()
 
 
    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MusicTable::setTheme);
-   connect(title_table, &QListWidget::itemDoubleClicked, this, &MusicTable::play);
+   connect(this, &MusicTable::temp, this, &MusicTable::play);
    connect(playAll,&DPushButton::clicked,this, &MusicTable::bt_playAll);
    //connect(selectDir,&DPushButton::clicked,this, &MusicTable::bt_selectDir);
 }
@@ -137,8 +137,8 @@ void MusicTable::initLayout(){
     qf= new QFrame();
     qf->setObjectName("tableqf");
     QVBoxLayout *temp = new QVBoxLayout();
-    temp->addLayout(display_HBoxLayout);
-    temp->addSpacing(10);
+    //temp->addLayout(display_HBoxLayout);
+    //temp->addSpacing(10);
     temp->addLayout(button_HBoxLayout);
     temp->addSpacing(10);
     qf->setLayout(temp);
@@ -180,7 +180,8 @@ void MusicTable::Addmusic(const MMeta&music){
        QString duration = QString("%1:%2").arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
        // 设置第二列（标题）
        CustomListView *view = new CustomListView();
-       view->tableWidget=title_table;
+       view->tableWidget=this;
+       view->number=row;
        QStandardItemModel *model = new QStandardItemModel(view);
 
 
@@ -205,7 +206,7 @@ void MusicTable::Addmusic(const MMeta&music){
 
        act->setText(music.artist);
        act->setFontSize(DFontSizeManager::T8);
-       act->setTextColorRole(DPalette::TextTitle );
+       act->setTextColorRole(DPalette::TextTips );
        act->setParent(this);
        item1->setTextAlignment(Qt::AlignTop | Qt::AlignLeft);
        item1->setTextActionList({act});
@@ -239,13 +240,13 @@ void MusicTable::Addmusic(const MMeta&music){
 
        title_table->setItemWidget(item02,view);
        title_table->addItem(item02);
-}
- void MusicTable::play(QListWidgetItem *item) {
 
-        int row = title_table->row(item);
+
+}
+ void MusicTable::play(int index ) {
 
        auto &musicplayer=MusicPlayer::instance();
-       musicplayer.locallist->setCurrentIndex(row);
+       musicplayer.locallist->setCurrentIndex(index);
        musicplayer.play();
 }
 void MusicTable::bt_playAll(){
@@ -256,19 +257,8 @@ void MusicTable::bt_playAll(){
 
 
 void CustomListView::mouseDoubleClickEvent(QMouseEvent *event) {
-
-    //QPoint globalPos = this->mapTo(tableWidget, QPoint(0, 0));
-    QPoint pos = event->pos();
-
-    QListWidgetItem *item = tableWidget->itemAt(pos);
-
-    if (item) {
-
-        emit tableWidget->itemDoubleClicked(item);
-
-    }
-
-     QListView::mouseDoubleClickEvent(event);
+       emit tableWidget->temp(this->number);
+       QAbstractItemView::mouseDoubleClickEvent(event);
 }
 
 void MusicTable::LoadStyleSheet()
@@ -294,8 +284,7 @@ void MusicTable::setTheme(DGuiApplicationHelper::ColorType theme){
     }else {
         QPalette palette = this->palette();
         palette.setColor(QPalette::Background,Qt::black);
-        this->setPalette(palette);
-        this->setAutoFillBackground(true);
+
     }
 }
 //void MusicTable::bt_selectDir(){

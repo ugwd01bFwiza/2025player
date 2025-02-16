@@ -5,7 +5,7 @@
 #include<DLabel>
 #include<DScrollBar>
 #include<DTitlebar>
-#include <DWidgetUtil>
+#include<DWidgetUtil>
 #include<DPaletteHelper>
 #include<DScrollArea>
 #include<QStackedWidget>
@@ -105,7 +105,11 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
     if (row==0)
     {
         page->setCurrentIndex(0);
-
+//        if(cbar->mediaPlayer!=nullptr){
+//            cbar->mediaPlayer->stop();
+//        }
+        cbar->mediaPlayer=&MusicPlayer::instance();
+        cbar->readVolume("");
     }
     else if(row==1){
         page->setCurrentIndex(1);

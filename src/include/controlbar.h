@@ -3,7 +3,9 @@
 #include"musicplayer.h"
 #include<DIconButton>
 #include <DWidget>
-
+#include<QTimer>
+#include<DLabel>
+#include<DSlider>
 DWIDGET_USE_NAMESPACE
 class ControlBar : public QFrame
 {
@@ -14,17 +16,33 @@ public:
     DIconButton *btpre=new DIconButton(this);
     DIconButton *btstop=new DIconButton(this);
     DIconButton *btnex=new DIconButton(this);
-    DIconButton *btvolume=new DIconButton(this);
+    //DIconButton *btvolume=new DIconButton(this);
     DIconButton *btscreen=new DIconButton(this);
-
+    MusicPlayer* mediaPlayer;
+    QTimer* cTimer;
+    DSlider* processSlider;
+    DLabel*playtime;
+    DLabel* endtime;
+    DSlider* volumeSlider;
+    ///记录归零之前的音量
+    int preVolume=100;
+    int  currenttime;
     void LoadStyleSheet();
+
 public slots:
     void stchange(QMediaPlayer::State state);
     void playslot();
-
+    ///更改进度条
+    void handleTimeout();
     void preslot();
     void stopslot();
     void nexslot();
+    void mediachange(int index);
+    void sliderchange(int value);
+    void volumesetting(int value);
+    void processsetting();
+    void switchvolume();
+    void readVolume(const QString &filePath);
 };
 
 #endif // CONTROLBAR_H

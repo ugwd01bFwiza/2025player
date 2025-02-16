@@ -12,6 +12,7 @@
 #include<DGuiApplicationHelper>
 #include<QFrame>
 #include<DLabel>
+
 #include<QListWidget>
  DWIDGET_USE_NAMESPACE
 
@@ -32,7 +33,7 @@ public:
     void Addmusic(const MMeta&music);
 
 public slots:
-    void play(QListWidgetItem *item);
+    void play(int index);
     void setTheme(DGuiApplicationHelper::ColorType);
 private slots:
      void bt_playAll();
@@ -42,6 +43,8 @@ private:
     void localMusicLayout();
     void initLayout();
     void initItem();
+signals:
+    void temp(int index);
 };
 
 
@@ -50,9 +53,10 @@ private:
 class CustomListView : public DListView{
 Q_OBJECT
 public:
-    QListWidget *tableWidget;
+    MusicTable *tableWidget;
+    int number;
+    void mouseDoubleClickEvent(QMouseEvent *event) ;
 
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
 };
 
 #endif // MEDIATABLE_H

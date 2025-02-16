@@ -6,7 +6,7 @@ NavWidget::NavWidget()
 {
     this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
-    this->setAutoFillBackground(true);
+    this->stackUnder(this);
     auto VLayoutLeft = new QVBoxLayout(this);
     DLabel *label1 = new DLabel(this);
     label1->setText("多媒体库");
