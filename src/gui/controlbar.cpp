@@ -23,7 +23,7 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     volumeSlider->setMinimum(0);
     volumeSlider->setMaximum(100);
     volumeSlider->setLeftIcon(QIcon(":/asset/image/fvolume.PNG"));
-    volumeSlider->setMaximumWidth(100);
+    volumeSlider->setMaximumWidth(120);
     volumeSlider->setIconSize(QSize(24,24));
     btplay->setIcon(QIcon(":/asset/image/play.PNG"));
     btplay->setIconSize(QSize(24,24));
@@ -191,13 +191,14 @@ void ControlBar::stopslot(){
 }
 void ControlBar::nexslot(){
       mediaPlayer->playlist()->next(); mediaPlayer->play();
+
 }
 
 void ControlBar::handleTimeout(){
      currenttime+=1;
 
      playtime ->setText(formatTime(currenttime));
-
+     if(processSlider->value()!=currenttime)
      processSlider->setValue(currenttime);
 
 }
@@ -210,6 +211,7 @@ void ControlBar::mediachange(int index){
     processSlider->setValue(currenttime);
     endtime->setText(QString(formatTime(mediaPlayer->MMetalist[index].duration)));
     processSlider->setMaximum(mediaPlayer->MMetalist[index].duration);
+    temp->title_table->setCurrentRow(index);
 }
 void ControlBar::sliderchange(int value){
     currenttime=value;

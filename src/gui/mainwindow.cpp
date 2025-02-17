@@ -34,7 +34,8 @@ MainWindow::MainWindow()
     moveToCenter(this); //把窗口移动到屏幕中间
     //把主窗口分为上下两个垂直布局
 
-    MusicTable *music_table = new MusicTable();
+    music_table = new MusicTable();
+     cbar->temp=music_table;
     DPushButton *ts2=new DPushButton(this);
     ts2->setText("视频");
 
@@ -62,8 +63,8 @@ MainWindow::MainWindow()
     DownHLayout->setContentsMargins(0,0,0,0);
     DownHLayout->addWidget(cbar);
 
-    UpHLayout->setStretch(0, 6);
-    UpHLayout->setStretch(1, 22);
+    UpHLayout->setStretch(0, 1);
+    UpHLayout->setStretch(1, 5);
 
     MainVLayout->setStretch(0, 9);
     MainVLayout->setStretch(1, 1);
@@ -72,6 +73,8 @@ MainWindow::MainWindow()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MainWindow::setTheme);
     //对应左侧导航栏
     connect(Navw->ListView1->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::currentchange);
+
+    QMetaObject::invokeMethod(this, "forceResize", Qt::QueuedConnection);
     Navw->ListView1->setCurrentIndex(Navw->ListView1->model()->index(0, 0));
 
 }
@@ -115,5 +118,13 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
         page->setCurrentIndex(1);
 
     }
+
 }
 
+///重设大小
+void MainWindow::resizeEvent(QResizeEvent *event)  {
+     DMainWindow::resizeEvent(event);
+     music_table->onResetWindowSize(event->size().width());
+
+
+}

@@ -7,6 +7,7 @@
 #include <DGuiApplicationHelper>//用来适配深色模式
 #include<QVBoxLayout>
 #include<QMediaPlayer>
+#include <QResizeEvent>
 DWIDGET_USE_NAMESPACE
 
 class MainWindow : public DMainWindow
@@ -28,10 +29,13 @@ private:
     QHBoxLayout* RightHLayout = new QHBoxLayout;   
     QMediaPlayer *player = new QMediaPlayer(this);
     QStackedWidget * page;
+    MusicTable *music_table;
+
 public slots:
     void setTheme(DGuiApplicationHelper::ColorType);
     void currentchange(const QModelIndex &current,const QModelIndex &previous);
-
+    protected:
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // MAINWINDOW_H

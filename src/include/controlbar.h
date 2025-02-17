@@ -1,12 +1,14 @@
 #ifndef CONTROLBAR_H
 #define CONTROLBAR_H
 #include"musicplayer.h"
+#include"musictable.h"
 #include<DIconButton>
 #include <DWidget>
 #include<QTimer>
 #include<DLabel>
 #include<DSlider>
 DWIDGET_USE_NAMESPACE
+///最下面控制栏
 class ControlBar : public QFrame
 {
     Q_OBJECT
@@ -24,6 +26,9 @@ public:
     DLabel*playtime;
     DLabel* endtime;
     DSlider* volumeSlider;
+
+
+    MusicTable * temp;
     ///记录归零之前的音量
     int preVolume=100;
     int  currenttime;
@@ -43,6 +48,7 @@ public slots:
     void processsetting();
     void switchvolume();
     void readVolume(const QString &filePath);
+
 };
 
 #endif // CONTROLBAR_H

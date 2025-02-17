@@ -3,7 +3,7 @@
 
 #include<DListView>
  DWIDGET_USE_NAMESPACE
- //最左边导航栏
+ ///最左边导航栏
 class NavWidget : public QWidget
 {
     Q_OBJECT

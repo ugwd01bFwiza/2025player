@@ -202,6 +202,8 @@ void MusicTable::Addmusic(const MMeta&music){
        view->setOrientation(QListView::LeftToRight,false);
        view->setResizeMode(QListView::Adjust);
 
+       view->itemdelegate = new CustomItemDelegate(view);
+       view->setItemDelegate(view->itemdelegate);
        DViewItemAction *act = new DViewItemAction;
 
        act->setText(music.artist);
@@ -216,10 +218,10 @@ void MusicTable::Addmusic(const MMeta&music){
        item2->setTextAlignment(Qt::AlignCenter);
        item3->setTextAlignment(Qt::AlignCenter);
        item0->setSizeHint(QSize(40,70));
-       item1->setSizeHint(QSize(150,70));
        item11->setSizeHint(QSize(90,70));
+       item1->setSizeHint(QSize(150,70));
        item2->setSizeHint(QSize(300,70));
-       item3->setSizeHint(QSize(70,70));
+       item3->setSizeHint(QSize(100,70));
        item0->setEditable(false);
        item11->setEditable(false);
        item1->setEditable(false);
@@ -240,7 +242,7 @@ void MusicTable::Addmusic(const MMeta&music){
 
        title_table->setItemWidget(item02,view);
        title_table->addItem(item02);
-
+       listDlistView.append(view);
 
 }
  void MusicTable::play(int index ) {
@@ -287,19 +289,10 @@ void MusicTable::setTheme(DGuiApplicationHelper::ColorType theme){
 
     }
 }
-//void MusicTable::bt_selectDir(){
-//    //获取绝对位置x,y
-//    int x = this->parentWidget()->parentWidget()->parentWidget()->mapToGlobal(QPoint(0,0)).rx() +
-//            parentWidget()->parentWidget()->parentWidget()->width()/2 -
-//            450/2;
-//    int y = this->parentWidget()->parentWidget()->parentWidget()->mapToGlobal(QPoint(0,0)).ry() +
-//            parentWidget()->parentWidget()->parentWidget()->height()/2 -
-//            300/2;
-//    DFileDialog * fileDialog=new DFileDialog(this,"选择本地音乐目录",MusicPlayer::instance();
-//    fileDialog->move(x,y);
-//    int ret = fileDialog->exec();
-
-
-//    delete fileDialog;
-//}
+void MusicTable::onResetWindowSize(int width){
+    for(auto i : listDlistView){
+       i->itemdelegate->factor=((width-900)*5/18);
+       qDebug()<<"factor:"<<i->itemdelegate->factor;
+    }
+}
 
