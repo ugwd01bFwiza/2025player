@@ -32,7 +32,7 @@
      QList<CustomListView*> listDlistView;
      QFrame *qf;
 
-     void Addmusic(const MMeta& music);
+     void Addmusic(const MetaData& music);
      void onResetWindowSize(int width);
 
  public slots:

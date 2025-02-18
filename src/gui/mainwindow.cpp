@@ -16,6 +16,8 @@ MainWindow::~MainWindow() {
     delete UpHLayout;
     delete DownHLayout;
     delete RightHLayout;
+    delete &MusicPlayer::instance();
+    delete DataBase::Instance();
 }
 MainWindow::MainWindow()
 
@@ -74,7 +76,7 @@ MainWindow::MainWindow()
     //对应左侧导航栏
     connect(Navw->ListView1->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::currentchange);
 
-    QMetaObject::invokeMethod(this, "forceResize", Qt::QueuedConnection);
+
     Navw->ListView1->setCurrentIndex(Navw->ListView1->model()->index(0, 0));
 
 }

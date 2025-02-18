@@ -69,8 +69,9 @@ void MusicTable::initItem(){
      title_table->setResizeMode(QListView::Adjust);
 //    title_table->verticalHeader()->setObjectName("music_verticalHeader");
     auto &musicplayer=MusicPlayer::instance();
-    for (auto i:musicplayer.MMetalist)
-        Addmusic(i);
+
+            for (auto& i : musicplayer.MMetalist)
+                Addmusic(i);
 
 
     playAll = new DPushButton(this);
@@ -153,7 +154,7 @@ void MusicTable::initLayout(){
     title_table->setSpacing(10);
 }
 
-void MusicTable::Addmusic(const MMeta&music){
+void MusicTable::Addmusic(const MetaData&music){
 
     int minutes = music.duration / 60;
     int seconds = music.duration % 60;
@@ -189,7 +190,7 @@ void MusicTable::Addmusic(const MMeta&music){
        DStandardItem *item0 = new DStandardItem(rowNumber);
        DStandardItem *item11 = new DStandardItem();
        item11->setIcon(roundedPixmap.scaled(QSize(50,50)));
-       DStandardItem *item1 = new DStandardItem(music.sname);
+       DStandardItem *item1 = new DStandardItem(music.title);
 
 
        DStandardItem *item2 = new DStandardItem(music.album);
@@ -292,7 +293,7 @@ void MusicTable::setTheme(DGuiApplicationHelper::ColorType theme){
 void MusicTable::onResetWindowSize(int width){
     for(auto i : listDlistView){
        i->itemdelegate->factor=((width-900)*5/18);
-       qDebug()<<"factor:"<<i->itemdelegate->factor;
+       //qDebug()<<"factor:"<<i->itemdelegate->factor;
     }
 }
 
