@@ -5,10 +5,12 @@ INCLUDEPATH += /usr/include/taglib /usr/include/taglib-extras
 
 LIBS += -L/usr/lib -ltag
 
-
 QMAKE_CXXFLAGS += -I /usr/include/taglib -I /usr/include/taglib-extras
 QMAKE_LIBS += -ltag
 
+QMAKE_PKGCONFIG_LIBDIR += ./src/thirdparty/ffmpeg/lib/pkgconfig
+CONFIG += link_pkgconfig
+PKGCONFIG += libavcodec libavdevice libavfilter libavformat libavutil libswresample libswscale
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,13 +26,16 @@ SOURCES +=src/main.cpp \
 
 
 RESOURCES += resources.qrc
+
 INCLUDEPATH += $$PWD/src/include
+INCLUDEPATH += $$PWD/src/thirdparty/ffmpeg/include
 
 HEADERS +=src/include/mainwindow.h \
     src/include/navwidget.h \
     src/include/controlbar.h \
     src/include/musictable.h \
-    src/include/musicplayer.h
+    src/include/musicplayer.h \
+    thirdparty/ffmpeg/include/*.h
 
 DISTFILES +=
 

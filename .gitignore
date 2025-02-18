@@ -12,6 +12,8 @@
 *.rej
 *.so
 *.so.*
+!thirdparty/ffmpeg/lib/*.so
+!thirdparty/ffmpeg/lib/*.so.*
 *_pch.h.cpp
 *_resource.rc
 *.qm
