@@ -10,26 +10,33 @@
 #include<DScrollArea>
 #include<QStackedWidget>
 MainWindow::~MainWindow() {
-    delete cw;
-    delete Navw;
-    delete MainVLayout;
-    delete UpHLayout;
-    delete DownHLayout;
-    delete RightHLayout;
+
     delete &MusicPlayer::instance();
     delete DataBase::Instance();
+
 }
 MainWindow::MainWindow()
 
 {
     //this->setWindowFlags(Qt::FramelessWindowHint);
-    this->titlebar()->setSeparatorVisible(false);
-    this->titlebar()->setAutoHideOnFullscreen(true);
-    this->titlebar()->setIcon(QIcon(":asset/image/logo.png"));
-    this->titlebar()->setTitle("Muiltimedia Player");
-    this->titlebar()->setFixedHeight(60);
-    this->setWindowRadius (10);
-    this->setMinimumSize(QSize(900, 600));
+
+    //this->titlebar()->setIcon(QIcon(":asset/image/logo.png"));
+    this->setTitlebarShadowEnabled(false);
+    this->setWindowRadius(18);
+    this->setObjectName("main_window");
+    this->setMinimumSize(QSize(1450, 800));
+    this->setShadowColor(Qt::transparent);
+    this->setEnableSystemResize(true);
+    this->LoadStyleSheet(":/asset/qss/mainwindow_dark.qss");
+    //标题栏
+    DTitlebar * bar=this->titlebar()
+;
+
+    bar->setBackgroundTransparent(true);
+    bar->setFixedHeight(70);
+    bar->setSeparatorVisible(false);
+    bar->setAutoHideOnFullscreen(true);
+    bar->setSwitchThemeMenuVisible(true);
     Navw->setAutoFillBackground(true);
     cbar->setAutoFillBackground(true);
 
@@ -46,27 +53,28 @@ MainWindow::MainWindow()
     page->addWidget(ts2);
       RightHLayout->addWidget(page);
     cw->setLayout(MainVLayout);
-    cw->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    QPalette palette = this->palette();
-    palette.setColor(QPalette::Background,Qt::transparent);
-    cw->setPalette(palette);
+    //cw->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+//    QPalette palette = this->palette();
+//    palette.setColor(QPalette::Background,Qt::transparent);
+//    cw->setPalette(palette);
 
     cbar->setStyleSheet("background-color:white");
-    MainVLayout->setContentsMargins(0, 0, 0, 0);
+
     MainVLayout->addSpacing(5);
     MainVLayout->addLayout(UpHLayout);
     MainVLayout->addLayout(DownHLayout);
-    UpHLayout->addWidget(Navw);
+    LeftHLayout->addWidget(Navw);
+    LeftHLayout->setContentsMargins(20,0,20,20);
+    UpHLayout->addLayout(LeftHLayout);
 
     UpHLayout->addLayout(RightHLayout);
+
     MainVLayout->setSpacing(0);
-    MainVLayout->setContentsMargins(0,0,0,0);
-    UpHLayout->setContentsMargins(0,0,0,0);
-    DownHLayout->setContentsMargins(0,0,0,0);
+
     DownHLayout->addWidget(cbar);
 
     UpHLayout->setStretch(0, 1);
-    UpHLayout->setStretch(1, 5);
+    UpHLayout->setStretch(1, 4);
 
     MainVLayout->setStretch(0, 9);
     MainVLayout->setStretch(1, 1);
@@ -78,6 +86,9 @@ MainWindow::MainWindow()
 
 
     Navw->ListView1->setCurrentIndex(Navw->ListView1->model()->index(0, 0));
+//    MainVLayout->setContentsMargins(0,0,0,0);
+
+//    DownHLayout->setContentsMargins(0,0,0,0);
 
 }
 
@@ -85,13 +96,13 @@ MainWindow::MainWindow()
 void MainWindow::setTheme(DGuiApplicationHelper::ColorType theme)
 {
 
-    if(theme==DGuiApplicationHelper::LightType){
-        QPalette palette = this->palette();
-        cbar->setPalette(palette);
-    }else {
-        QPalette palette = this->palette();
-        cbar->setPalette(palette);
-    }
+//    if(theme==DGuiApplicationHelper::LightType){
+//        QPalette palette = this->palette();
+//        cbar->setPalette(palette);
+//    }else {
+//        QPalette palette = this->palette();
+//        cbar->setPalette(palette);
+//    }
 }
 
 
@@ -129,4 +140,17 @@ void MainWindow::resizeEvent(QResizeEvent *event)  {
      music_table->onResetWindowSize(event->size().width());
 
 
+}
+void MainWindow::LoadStyleSheet( QString url)
+{
+    QFile file(url);
+    file.open(QIODevice::ReadOnly);
+
+    if (file.isOpen())
+    {
+        QString style = this->styleSheet();
+        style += QLatin1String(file.readAll());
+        this->setStyleSheet(style);
+        file.close();
+    }
 }

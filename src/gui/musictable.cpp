@@ -33,12 +33,11 @@ void MusicTable::initItem(){
     title_table = new QListWidget(this);
 
 
-    title_table->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     title_table->setObjectName("table_music");
     QList <QString> tableList;//
     //QStandardItemModel* headmodel = new QStandardItemModel;
     title_table->setSortingEnabled(false);
-    title_table->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
     tableList << "#" << "音乐标题"  << "专辑" << "时长" ;
     title_table->setIconSize(QSize(50,50));
 
@@ -87,32 +86,31 @@ void MusicTable::initItem(){
 }
 void MusicTable::localMusicLayout()
 {
-    display_HBoxLayout = new QHBoxLayout();
+//    display_HBoxLayout = new QHBoxLayout();
 
-    displayLabel[0] = new DLabel(this);
-    displayLabel[0]->setText("本地音乐");
-    displayLabel[0]->setObjectName("localLabel");
-    displayLabel[1] = new DLabel(this);
-    displayLabel[1]->setText("共0首");
-    displayLabel[1]->setObjectName("numberlabel");
-    selectDir = new DPushButton(this);
-    selectDir->setText("选择目录");
-    selectDir->setObjectName("selectButton");
-    selectDir->setCursor(Qt::PointingHandCursor);
+//    displayLabel[0] = new DLabel(this);
+//    displayLabel[0]->setText("本地音乐");
+//    displayLabel[0]->setObjectName("localLabel");
+//    displayLabel[1] = new DLabel(this);
+//    displayLabel[1]->setText("共0首");
+//    displayLabel[1]->setObjectName("numberlabel");
+//    selectDir = new DPushButton(this);
+//    selectDir->setText("选择目录");
+//    selectDir->setObjectName("selectButton");
+//    selectDir->setCursor(Qt::PointingHandCursor);
 
 
-    QSpacerItem *display_hSpacer = new QSpacerItem(200,10,
-                                                   QSizePolicy::Expanding,
-                                                   QSizePolicy::Expanding);
+//    QSpacerItem *display_hSpacer = new QSpacerItem(200,10,
+//                                                   QSizePolicy::Expanding,
+//                                                   QSizePolicy::Expanding);
 
-    display_HBoxLayout->addWidget(displayLabel[0]);
-    display_HBoxLayout->addWidget(displayLabel[1]);
-    display_HBoxLayout->addSpacerItem(display_hSpacer);
-    display_HBoxLayout->addWidget(selectDir);
-    display_HBoxLayout->addSpacing(30);
+//    display_HBoxLayout->addWidget(displayLabel[0]);
+//    display_HBoxLayout->addWidget(displayLabel[1]);
+//    display_HBoxLayout->addSpacerItem(display_hSpacer);
+//    display_HBoxLayout->addWidget(selectDir);
+//    display_HBoxLayout->addSpacing(30);
 }
 void MusicTable::initLayout(){
-    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
     QVBoxLayout *VLayout=new QVBoxLayout ();
 
@@ -143,10 +141,10 @@ void MusicTable::initLayout(){
     temp->addLayout(button_HBoxLayout);
     temp->addSpacing(10);
     qf->setLayout(temp);
-    temp->setContentsMargins(10,10,0,0);
+    //temp->setContentsMargins(10,10,0,0);
     VLayout->addWidget(qf);
     VLayout->addWidget(title_table);
-    VLayout->setContentsMargins(0,0,0,0);
+    //VLayout->setContentsMargins(0,0,0,0);
     VLayout->setStretch(0,1);
     VLayout->setStretch(1,8);
     this->setLayout(VLayout);
@@ -209,8 +207,9 @@ void MusicTable::Addmusic(const MetaData&music){
 
        act->setText(music.artist);
        act->setFontSize(DFontSizeManager::T8);
-       act->setTextColorRole(DPalette::TextTips );
-       act->setParent(this);
+       act->setTextColorRole(DPalette::TextTitle );
+       act->setParent(view);
+
        item1->setTextAlignment(Qt::AlignTop | Qt::AlignLeft);
        item1->setTextActionList({act});
        item0->setTextAlignment(Qt::AlignCenter);
@@ -280,15 +279,15 @@ void MusicTable::LoadStyleSheet()
 
 void MusicTable::setTheme(DGuiApplicationHelper::ColorType theme){
 
-    if(theme==DGuiApplicationHelper::LightType){
-        QPalette palette = this->palette();
-        palette.setColor(QPalette::Background, Qt::white);
+//    if(theme==DGuiApplicationHelper::LightType){
+//        QPalette palette = this->palette();
+//        palette.setColor(QPalette::Background, Qt::white);
 
-    }else {
-        QPalette palette = this->palette();
-        palette.setColor(QPalette::Background,Qt::black);
+//    }else {
+//        QPalette palette = this->palette();
+//        palette.setColor(QPalette::Background,Qt::black);
 
-    }
+//    }
 }
 void MusicTable::onResetWindowSize(int width){
     for(auto i : listDlistView){

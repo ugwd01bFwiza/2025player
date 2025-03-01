@@ -14,12 +14,13 @@ class ControlBar : public QFrame
     Q_OBJECT
 public:
     explicit ControlBar(QWidget *parent = nullptr);
-    DIconButton *btplay=new DIconButton(this);
-    DIconButton *btpre=new DIconButton(this);
-    DIconButton *btstop=new DIconButton(this);
-    DIconButton *btnex=new DIconButton(this);
+
+    DIconButton *btplay;
+    DIconButton *btpre;
+    DIconButton *btstop;
+    DIconButton *btnex;
     //DIconButton *btvolume=new DIconButton(this);
-    DIconButton *btscreen=new DIconButton(this);
+    DIconButton *btscreen;
     MusicPlayer* mediaPlayer;
     QTimer* cTimer;
     DSlider* processSlider;

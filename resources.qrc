@@ -13,6 +13,8 @@
         <file>asset/image/stop.PNG</file>
         <file>asset/image/zvolume.PNG</file>
         <file>asset/qss/musictb.qss</file>
+        <file>asset/qss/mainwindow_dark.qss</file>
+        <file>asset/qss/navwidget_dark.qss</file>
         <file>asset/qss/cbar.qss</file>
     </qresource>
 </RCC>

@@ -1,15 +1,21 @@
 #include "navwidget.h"
 #include<DLabel>
 #include<QVBoxLayout>
+#include<QFile>
 ///左侧导航栏
 NavWidget::NavWidget()
 {
-    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
+    QFont chineseFont("Noto Sans CJK SC");
     this->stackUnder(this);
+    this->setObjectName("navigate_frame");
+    this->LoadStyleSheet(":/asset/qss/navwidget_dark.qss");
+
     auto VLayoutLeft = new QVBoxLayout(this);
+    //VLayoutLeft->setContentsMargins(10,10,10,10);
+
     DLabel *label1 = new DLabel(this);
-    label1->setText("多媒体库");
+
     label1->setAlignment(Qt::AlignCenter);
 
     QStandardItemModel *model = new QStandardItemModel();
@@ -24,16 +30,29 @@ NavWidget::NavWidget()
 
     AddItems( QIcon(":asset/image/music.png"),"Local Music");
     AddItems(QIcon(":asset/image/video.png"),"Video");
-    ListView1->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+   // ListView1->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     ListView1->setModel(model);
 
     VLayoutLeft->addSpacing(5);
     VLayoutLeft->addWidget(label1);
     VLayoutLeft->addSpacing(10);
     VLayoutLeft->addWidget(ListView1);
-
-    ListView1->setItemSpacing(0);
+    ListView1->setItemSpacing(5);
 
     VLayoutLeft->addStretch(100);
-     VLayoutLeft->setContentsMargins(0,0,0,0);
+
 }
+void NavWidget::LoadStyleSheet( QString url)
+{
+    QFile file(url);
+    file.open(QIODevice::ReadOnly);
+
+    if (file.isOpen())
+    {
+        QString style = this->styleSheet();
+        style += QLatin1String(file.readAll());
+        this->setStyleSheet(style);
+        file.close();
+    }
+}
+

@@ -7,10 +7,16 @@
 
 ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
 {
+    btplay = new DIconButton(this);
+    btpre = new DIconButton(btplay);
+    btstop = new DIconButton(btplay);
+    btnex = new DIconButton(btplay);
+
+    btscreen = new DIconButton(btplay);
     currenttime=0;
     cTimer=new QTimer(this);
-    LoadStyleSheet();
-    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
+    //this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     QPalette qp = parent->palette();
     qp.setColor(QPalette::Background, Qt::transparent);
     QVBoxLayout* MainVlayout = new QVBoxLayout(this);
@@ -29,18 +35,21 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     btplay->setIconSize(QSize(24,24));
     btplay->setFixedSize(QSize(36,36));
     btplay->setObjectName("bt_play");
-    btplay->setFlat(false);
+
     btpre->setIcon(QIcon(":/asset/image/previous.PNG"));
     btpre->setIconSize(QSize(18,18));
+    btpre->setFixedSize(QSize(30,30));
     btpre->setObjectName("bt_pre");
     //btpre->setStyleSheet("#bt_pre{ background-color: transparent;}");
 
     btstop->setIcon(QIcon(":/asset/image/stop.PNG"));
     btstop->setIconSize(QSize(18, 18));
+    btstop->setFixedSize(QSize(30,30));
     btstop->setObjectName("bt_stop");
 
     btnex->setIcon(QIcon(":/asset/image/next.PNG"));
     btnex->setIconSize(QSize(18, 18));
+    btnex->setFixedSize(QSize(30,30));
     btnex->setObjectName("bt_next");
 
 
@@ -51,7 +60,7 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     btscreen->setIcon(QIcon(":/asset/image/fscreen.PNG"));
     btscreen->setIconSize(QSize(24, 24));
     btscreen->setObjectName("bt_screen");
-
+    btscreen->setFixedSize(QSize(30,30));
 //    QString styleSheet = "#bt_play:hover, #bt_pre:hover, #bt_stop:hover, #bt_next:hover, #bt_volume:hover, #bt_screen:hover { background-color: #f1f1f1; }"
 //                             "#bt_play:active, #bt_pre:active, #bt_stop:active, #bt_next:active, #bt_volume:active, #bt_screen:active { background-color: #ccc; }"
 //                             "#bt_play, #bt_pre, #bt_stop, #bt_next, #bt_volume, #bt_screen { background-color: transparent; }";
@@ -76,8 +85,9 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
 
     DownHlayout->addSpacing(4);
     DownHlayout->addWidget(btplay);
-    DownHlayout->addSpacing(5);
+    DownHlayout->addSpacing(1);
     DownHlayout->addWidget(btpre);
+    DownHlayout->addSpacing(0);
     DownHlayout->addWidget(btstop);
     DownHlayout->addWidget(btnex);
     DownHlayout->addSpacing(5);
@@ -100,7 +110,7 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     //connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MusicTable::setTheme);
     //connect(btvolume, &DIconButton::clicked, this, &ControlBar::switchvolume);
 
-
+    LoadStyleSheet();
 //    connect(volumeSlider, &DSlider::valueChanged, mediaPlayer, &QMediaPlayer::setVolume);
 }
 ///读取设置之前的音量设置(todo
@@ -117,7 +127,11 @@ void ControlBar::LoadStyleSheet()
     {
         QString style = this->styleSheet();
         style += QLatin1String(file.readAll());
-        this->setStyleSheet(style);
+        btplay->setStyleSheet(style);
+        btpre->setStyleSheet(style);
+        btnex->setStyleSheet(style);
+        btscreen->setStyleSheet(style);
+        btstop->setStyleSheet(style);
         file.close();
     }
 }

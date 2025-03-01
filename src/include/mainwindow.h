@@ -17,7 +17,7 @@ public:
     MainWindow();
     ~MainWindow();
 private:
-    QWidget *cw = new QWidget();
+    QWidget *cw = new QWidget(this);
     NavWidget *Navw = new  NavWidget;
     ControlBar * cbar = new ControlBar(this);
     //主布局
@@ -27,9 +27,11 @@ private:
     QHBoxLayout* DownHLayout = new QHBoxLayout;
     //有奖
     QHBoxLayout* RightHLayout = new QHBoxLayout;   
+    QHBoxLayout* LeftHLayout = new QHBoxLayout;
     QMediaPlayer *player = new QMediaPlayer(this);
     QStackedWidget * page;
     MusicTable *music_table;
+    void LoadStyleSheet(QString url);
 
 public slots:
     void setTheme(DGuiApplicationHelper::ColorType);

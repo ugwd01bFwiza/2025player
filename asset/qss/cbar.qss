@@ -1,17 +1,19 @@
-DIconButton
-{
-background-color: transparent;
-}
-#bt_play{
-    background-color: transparent;
+
+#bt_play, #bt_pre, #bt_stop, #bt_next, #bt_volume, #bt_screen{
+    background-color: white;
+    border-style:none;
 }
 
-#bt_play:hover, #bt_pre:hover, #bt_stop:hover, #bt_next:hover, #bt_volume:hover, #bt_screen:hover {
-    background-color: #f1f1f1;
+#bt_play:hover, #bt_pre:hover, #bt_stop:hover, #bt_next:hover, #bt_volume:hover, #bt_screen:hover{
+    background-color: #f7f7f7;
+    border-radius:8px;
+     border-style:none;
 }
 
-#bt_play:active, #bt_pre:active, #bt_stop:active, #bt_next:active, #bt_volume:active, #bt_screen:active {
-    background-color: #ccc;
+#bt_play:pressed, #bt_pre:pressed, #bt_stop:pressed, #bt_next:pressed, #bt_volume:pressed, #bt_screen:pressed {
+    background-color: #0080fe;
+
+    border-style:inset;
 }
 
 

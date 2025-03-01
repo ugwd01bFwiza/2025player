@@ -1,0 +1,19 @@
+/* 设置QMainWindow的整体背景颜色 */
+#main_window {
+background-color: white;
+color: white;
+outline: none;
+margin: 10px;
+border-radius: 18px;  /* 圆角设置 */
+padding: 10px;
+}
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+QFrame#navigate_frame{
+    background-color: white;
+    color: white;
+    outline: none;
+
+
+    border-radius: 40px;
+    padding: 5px;
+}

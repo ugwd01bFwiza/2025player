@@ -24,9 +24,9 @@
 
      QListWidget *title_table;
      DPushButton *playAll;
-     DPushButton *selectDir;
-     DLabel *displayLabel[2];
-     QVBoxLayout *local_VBoxLayout;
+//     DPushButton *selectDir;
+//     DLabel *displayLabel[2];
+//     QVBoxLayout *local_VBoxLayout;
      QHBoxLayout *display_HBoxLayout;
      QStackedWidget *page;
      QList<CustomListView*> listDlistView;
