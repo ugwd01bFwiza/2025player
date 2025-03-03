@@ -4,7 +4,7 @@
 #include<DLabel>
 #include<DIconButton>
 #include<QFile>
-
+#include <QRandomGenerator>
 ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
 {
     btplay = new DIconButton(this);
@@ -12,6 +12,7 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     btstop = new DIconButton(btplay);
     btnex = new DIconButton(btplay);
 
+    btloop = new DIconButton(btplay);
     btscreen = new DIconButton(btplay);
     currenttime=0;
     cTimer=new QTimer(this);
@@ -60,7 +61,17 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     btscreen->setIcon(QIcon(":/asset/image/fscreen.PNG"));
     btscreen->setIconSize(QSize(24, 24));
     btscreen->setObjectName("bt_screen");
-    btscreen->setFixedSize(QSize(30,30));
+
+
+    btscreen->setFixedSize(QSize(36,36));
+
+    btloop->setIcon(QIcon(":/asset/image/queue.PNG"));
+
+    btloop->setIconSize(QSize(36, 36));
+
+   btloop->setObjectName("bt_loop");
+   btloop->setFixedSize(QSize(36,36));
+   this->ChangeLoopBtIcon();
 //    QString styleSheet = "#bt_play:hover, #bt_pre:hover, #bt_stop:hover, #bt_next:hover, #bt_volume:hover, #bt_screen:hover { background-color: #f1f1f1; }"
 //                             "#bt_play:active, #bt_pre:active, #bt_stop:active, #bt_next:active, #bt_volume:active, #bt_screen:active { background-color: #ccc; }"
 //                             "#bt_play, #bt_pre, #bt_stop, #bt_next, #bt_volume, #bt_screen { background-color: transparent; }";
@@ -96,27 +107,29 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     DownHlayout->addWidget(volumeSlider);
     DownHlayout->addSpacing(5);
     DownHlayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    DownHlayout->addWidget(btloop);
     DownHlayout->addWidget(btscreen);
     connect(btplay,&DIconButton::clicked,this, &ControlBar::playslot);
     connect(btpre,&DIconButton::clicked,this, &ControlBar::preslot);
     connect(btstop,&DIconButton::clicked,this, &ControlBar::stopslot);
     connect(btnex,&DIconButton::clicked,this, &ControlBar::nexslot);
-    connect(&MusicPlayer::instance(),&MusicPlayer::stateChanged,this,&ControlBar::stchange);
-    connect(MusicPlayer::instance().locallist,&QMediaPlaylist::currentIndexChanged,this,&ControlBar::mediachange);
+    connect(MusicPlayer::instance().player,&QMediaPlayer::stateChanged,this,&ControlBar::stchange);
+    connect(MusicPlayer::instance().player,&QMediaPlayer::mediaStatusChanged,this,&ControlBar::mediachange);
     connect(cTimer, &QTimer::timeout, this, &ControlBar::handleTimeout);
     connect(processSlider,&DSlider::valueChanged,this,&ControlBar::sliderchange);
     connect(processSlider,&DSlider::sliderReleased ,this,&ControlBar::processsetting);
     connect(volumeSlider,&DSlider:: valueChanged,this,&ControlBar::volumesetting);
     //connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MusicTable::setTheme);
     //connect(btvolume, &DIconButton::clicked, this, &ControlBar::switchvolume);
-
+    connect(btloop,&DIconButton::clicked,this,&ControlBar::onLoopChange);
     LoadStyleSheet();
+
 //    connect(volumeSlider, &DSlider::valueChanged, mediaPlayer, &QMediaPlayer::setVolume);
 }
 ///读取设置之前的音量设置(todo
 void ControlBar::readVolume(const QString &filePath){
     volumeSlider->setValue(preVolume);
-    mediaPlayer->setVolume(preVolume);
+    mediaPlayer->player->setVolume(preVolume);
 }
 void ControlBar::LoadStyleSheet()
 {
@@ -132,6 +145,7 @@ void ControlBar::LoadStyleSheet()
         btnex->setStyleSheet(style);
         btscreen->setStyleSheet(style);
         btstop->setStyleSheet(style);
+        btloop->setStyleSheet(style);
         file.close();
     }
 }
@@ -184,7 +198,7 @@ void ControlBar::stchange(QMediaPlayer::State state){
     }
 }
 void ControlBar::playslot(){
-    auto player= mediaPlayer;
+    auto player= mediaPlayer->player;
     if(player->state()==QMediaPlayer::PlayingState){
 
         player->pause();
@@ -195,18 +209,71 @@ void ControlBar::playslot(){
     }
 }
 void ControlBar::preslot(){
-      mediaPlayer->playlist()->previous();
-      mediaPlayer->play();
+  int index = temp->title_table->currentRow();
+  if (index>0){
+    temp->playFromListView(index-1);
+}
 }
 void ControlBar::stopslot(){
-     mediaPlayer->stop();
+     mediaPlayer->player->stop();
 
 
 }
-void ControlBar::nexslot(){
-      mediaPlayer->playlist()->next(); mediaPlayer->play();
+void ControlBar::nexslot()
+{
+    int index = temp->title_table->currentRow();
+    if (index<temp->title_table->count()){
+               temp->playFromListView(index+1);
 
+    }
+
+    else {
+     temp->playFromListView(0);
+    }
 }
+
+
+void ControlBar::onLoopChange(){
+
+    switch (loopstate) {
+            case LoopState::Loop:
+                loopstate = LoopState::Random;  // 如果是 Loop，改成 Random
+                break;
+
+            case LoopState::Random:
+                loopstate = LoopState::Queue;  // 如果是 Random，改成 Queue
+                break;
+
+            case LoopState::Queue:
+                loopstate = LoopState::Loop;   // 如果是 Queue，改成 Loop
+                break;
+           }
+
+    this->ChangeLoopBtIcon();
+}
+
+void ControlBar::ChangeLoopBtIcon(){
+
+    switch (loopstate) {
+            case LoopState::Loop:
+                             btloop->setIcon(QIcon(":/asset/image/loop.png"));
+                               break;
+
+            case LoopState::Random:
+
+                             btloop->setIcon(QIcon(":/asset/image/shuffle.png"));
+                               break;
+
+            case LoopState::Queue:
+  btloop->setIcon(QIcon(":/asset/image/queue.png"));
+
+                              break;
+
+            default:
+            qDebug()<<"trap in ChangeLoopBtIcon";
+                               break;
+        }
+    }
 
 void ControlBar::handleTimeout(){
      currenttime+=1;
@@ -216,26 +283,55 @@ void ControlBar::handleTimeout(){
      processSlider->setValue(currenttime);
 
 }
-void ControlBar::mediachange(int index){
+void ControlBar::PlaySliderValueReset(){
     currenttime=0;
     cTimer->start(1000);
     processSlider->setMinimum(0);
 
     playtime ->setText(formatTime(currenttime));
     processSlider->setValue(currenttime);
-    endtime->setText(QString(formatTime(mediaPlayer->MMetalist[index].duration)));
-    processSlider->setMaximum(mediaPlayer->MMetalist[index].duration);
-    temp->title_table->setCurrentRow(index);
+
+
+}
+void ControlBar::mediachange(QMediaPlayer::MediaStatus state){
+    if (state==QMediaPlayer::MediaStatus::LoadedMedia)
+      {
+        PlaySliderValueReset();
+        endtime->setText(QString(formatTime(mediaPlayer->player->duration()/1000+1)));
+    processSlider->setMaximum(mediaPlayer->player->duration()/1000+1);
+    }
+    else if(state==QMediaPlayer::MediaStatus::EndOfMedia)
+    {
+        cTimer->stop();
+        if(loopstate=Loop){
+            PlaySliderValueReset();
+            playslot();
+        }
+        else if(loopstate==Queue){
+            nexslot();
+        }
+        else{
+            int index = temp->title_table->currentRow();
+                        int randomNumber = QRandomGenerator::global()->bounded(0, index);
+                         if (index<temp->title_table->count()){
+                       temp->playFromListView(randomNumber);
+
+            }
+
+
+        }
+
+    }
 }
 void ControlBar::sliderchange(int value){
     currenttime=value;
     playtime ->setText(formatTime(currenttime));
 }
 void ControlBar::volumesetting(int value){
-    mediaPlayer->setVolume(value);
+    mediaPlayer->player->setVolume(value);
 }
 void ControlBar::processsetting(){
-    mediaPlayer->setPosition(processSlider->value()*1000);
+    mediaPlayer->player->setPosition(processSlider->value()*1000);
 }
 void ControlBar::switchvolume() {
     if(volumeSlider->value()){

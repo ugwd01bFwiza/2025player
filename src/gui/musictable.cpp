@@ -11,7 +11,7 @@
 #include<DFileDialog>
 #include<QListWidget>
 #include <QMouseEvent>
-
+#include<QStringListModel>
 MusicTable::MusicTable()
 {
     this->setObjectName("localmusic");
@@ -22,10 +22,11 @@ MusicTable::MusicTable()
 
 
 
-   connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MusicTable::setTheme);
-   connect(this, &MusicTable::temp, this, &MusicTable::play);
-   connect(playAll,&DPushButton::clicked,this, &MusicTable::bt_playAll);
-   //connect(selectDir,&DPushButton::clicked,this, &MusicTable::bt_selectDir);
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,this,&MusicTable::setTheme);
+    connect(playAll,&DPushButton::clicked,this, &MusicTable::onBtPlayAll);
+    //connect(selectDir,&DPushButton::clicked,this, &MusicTable::bt_selectDir);
+    connect(searchEdit,&DLineEdit::textChanged, this, &MusicTable::onSearchTextChange);
+
 }
 
 void MusicTable::initItem(){
@@ -50,27 +51,27 @@ void MusicTable::initItem(){
     //设置为行选择
     title_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     //设置最后一栏自适应长度
-//    title_table->horizontalHeader()->setStretchLastSection(true);
+    //    title_table->horizontalHeader()->setStretchLastSection(true);
     //删除网格表
-//    title_table->setShowGrid(false);
+    //    title_table->setShowGrid(false);
     //去除边框线
     title_table->setFrameShape(QFrame::NoFrame);
     //去除选中虚线框
     title_table->setFocusPolicy(Qt::NoFocus);
 
     //设置点击单元格时，表头项不高亮
-//    title_table->horizontalHeader()->setHighlightSections(false);
-//    title_table->verticalHeader()->setHighlightSections(false);
+    //    title_table->horizontalHeader()->setHighlightSections(false);
+    //    title_table->verticalHeader()->setHighlightSections(false);
     //设置只能选中一个目标
     title_table->setSelectionMode(QAbstractItemView::SingleSelection);
     //设置垂直滚动条最小宽度
     title_table->verticalScrollBar()->setMaximumWidth(7);
-     title_table->setResizeMode(QListView::Adjust);
-//    title_table->verticalHeader()->setObjectName("music_verticalHeader");
+    title_table->setResizeMode(QListView::Adjust);
+    //    title_table->verticalHeader()->setObjectName("music_verticalHeader");
     auto &musicplayer=MusicPlayer::instance();
 
-            for (auto& i : musicplayer.MMetalist)
-                Addmusic(i);
+    for (auto& i : musicplayer.MMetalist)
+        Addmusic(i);
 
 
     playAll = new DPushButton(this);
@@ -86,29 +87,29 @@ void MusicTable::initItem(){
 }
 void MusicTable::localMusicLayout()
 {
-//    display_HBoxLayout = new QHBoxLayout();
+    //    display_HBoxLayout = new QHBoxLayout();
 
-//    displayLabel[0] = new DLabel(this);
-//    displayLabel[0]->setText("本地音乐");
-//    displayLabel[0]->setObjectName("localLabel");
-//    displayLabel[1] = new DLabel(this);
-//    displayLabel[1]->setText("共0首");
-//    displayLabel[1]->setObjectName("numberlabel");
-//    selectDir = new DPushButton(this);
-//    selectDir->setText("选择目录");
-//    selectDir->setObjectName("selectButton");
-//    selectDir->setCursor(Qt::PointingHandCursor);
+    //    displayLabel[0] = new DLabel(this);
+    //    displayLabel[0]->setText("本地音乐");
+    //    displayLabel[0]->setObjectName("localLabel");
+    //    displayLabel[1] = new DLabel(this);
+    //    displayLabel[1]->setText("共0首");
+    //    displayLabel[1]->setObjectName("numberlabel");
+    //    selectDir = new DPushButton(this);
+    //    selectDir->setText("选择目录");
+    //    selectDir->setObjectName("selectButton");
+    //    selectDir->setCursor(Qt::PointingHandCursor);
 
 
-//    QSpacerItem *display_hSpacer = new QSpacerItem(200,10,
-//                                                   QSizePolicy::Expanding,
-//                                                   QSizePolicy::Expanding);
+    //    QSpacerItem *display_hSpacer = new QSpacerItem(200,10,
+    //                                                   QSizePolicy::Expanding,
+    //                                                   QSizePolicy::Expanding);
 
-//    display_HBoxLayout->addWidget(displayLabel[0]);
-//    display_HBoxLayout->addWidget(displayLabel[1]);
-//    display_HBoxLayout->addSpacerItem(display_hSpacer);
-//    display_HBoxLayout->addWidget(selectDir);
-//    display_HBoxLayout->addSpacing(30);
+    //    display_HBoxLayout->addWidget(displayLabel[0]);
+    //    display_HBoxLayout->addWidget(displayLabel[1]);
+    //    display_HBoxLayout->addSpacerItem(display_hSpacer);
+    //    display_HBoxLayout->addWidget(selectDir);
+    //    display_HBoxLayout->addSpacing(30);
 }
 void MusicTable::initLayout(){
 
@@ -121,7 +122,7 @@ void MusicTable::initLayout(){
                                                   QSizePolicy::Expanding,
                                                   QSizePolicy::Expanding);
     QHBoxLayout *button_HBoxLayout = new QHBoxLayout();
-     DLineEdit *searchEdit = new DLineEdit();
+    searchEdit = new DLineEdit();
     searchEdit->setPlaceholderText("搜索本地音乐");
     searchEdit->setObjectName("localSearch");
     searchEdit->setMaximumSize(200,25);
@@ -159,110 +160,138 @@ void MusicTable::Addmusic(const MetaData&music){
     QPixmap roundedPixmap(music.covpix.size());
     roundedPixmap.fill(Qt::transparent);  // 设置透明背景
 
-       // 绘制圆角矩形
-       QPainter painter(&roundedPixmap);
-       painter.setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
-       painter.setBrush(QBrush(music.covpix));
-       painter.setPen(Qt::NoPen);  // 不需要边框
-       painter.drawRoundedRect(0, 0, music.covpix.width(), music.covpix.height(), 100, 100);  // 绘制圆角矩形
-       painter.end();
+    // 绘制圆角矩形
+    QPainter painter(&roundedPixmap);
+    painter.setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
+    painter.setBrush(QBrush(music.covpix));
+    painter.setPen(Qt::NoPen);  // 不需要边框
+    painter.drawRoundedRect(0, 0, music.covpix.width(), music.covpix.height(), 100, 100);  // 绘制圆角矩形
+    painter.end();
 
 
 
-       int row = title_table->count();
+    int row = title_table->count();
 
-     //music_Table->setRowHeight(row,200);
+    //music_Table->setRowHeight(row,200);
     // 设置每列的值;
     // 设置第一列（序号）
-       QString rowNumber = (row + 1 >= 10) ? QString::number(row + 1) : "0" + QString::number(row + 1);
+    QString rowNumber = (row + 1 >= 10) ? QString::number(row + 1) : "0" + QString::number(row + 1);
 
-       QString duration = QString("%1:%2").arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
-       // 设置第二列（标题）
-       CustomListView *view = new CustomListView();
-       view->tableWidget=this;
-       view->number=row;
-       QStandardItemModel *model = new QStandardItemModel(view);
-
-
-       view->setModel(model);
-       DStandardItem *item0 = new DStandardItem(rowNumber);
-       DStandardItem *item11 = new DStandardItem();
-       item11->setIcon(roundedPixmap.scaled(QSize(50,50)));
-       DStandardItem *item1 = new DStandardItem(music.title);
+    QString duration = QString("%1:%2").arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
+    // 设置第二列（标题）
+    CustomListView *view = new CustomListView();
+    view->tableWidget=this;
+    view->number=row;
+    view->url=music.url;
+    QStandardItemModel *model = new QStandardItemModel(view);
 
 
-       DStandardItem *item2 = new DStandardItem(music.album);
-       DStandardItem *item3 = new DStandardItem(duration);
-       view->setBackgroundType(DStyledItemDelegate::BackgroundType::NoBackground);
-       view->setSelectionMode(QAbstractItemView::NoSelection);
-       view->setIconSize(QSize(50,50));
-       view->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-      // view->setViewMode(QListView::IconMode);
-       view->setOrientation(QListView::LeftToRight,false);
-       view->setResizeMode(QListView::Adjust);
-
-       view->itemdelegate = new CustomItemDelegate(view);
-       view->setItemDelegate(view->itemdelegate);
-       DViewItemAction *act = new DViewItemAction;
-
-       act->setText(music.artist);
-       act->setFontSize(DFontSizeManager::T8);
-       act->setTextColorRole(DPalette::TextTitle );
-       act->setParent(view);
-
-       item1->setTextAlignment(Qt::AlignTop | Qt::AlignLeft);
-       item1->setTextActionList({act});
-       item0->setTextAlignment(Qt::AlignCenter);
-       item11->setTextAlignment(Qt::AlignCenter);
-       item1->setTextAlignment(Qt::AlignCenter);
-       item2->setTextAlignment(Qt::AlignCenter);
-       item3->setTextAlignment(Qt::AlignCenter);
-       item0->setSizeHint(QSize(40,70));
-       item11->setSizeHint(QSize(90,70));
-       item1->setSizeHint(QSize(150,70));
-       item2->setSizeHint(QSize(300,70));
-       item3->setSizeHint(QSize(100,70));
-       item0->setEditable(false);
-       item11->setEditable(false);
-       item1->setEditable(false);
-       item2->setEditable(false);
-       item3->setEditable(false);
-       view->addItem(rowNumber);
-
-       model->appendRow(item0);
-       model->appendRow(item11);
-       model->appendRow(item1);
-       model->appendRow(item2);
-       model->appendRow(item3);
+    view->setModel(model);
+    DStandardItem *item0 = new DStandardItem(rowNumber);
+    DStandardItem *item11 = new DStandardItem();
+    item11->setIcon(roundedPixmap.scaled(QSize(50,50)));
+    DStandardItem *item1 = new DStandardItem(music.title);
 
 
-       QListWidgetItem* item02 = new QListWidgetItem(title_table);
+    DStandardItem *item2 = new DStandardItem(music.album);
+    DStandardItem *item3 = new DStandardItem(duration);
+    view->setBackgroundType(DStyledItemDelegate::BackgroundType::NoBackground);
+    view->setSelectionMode(QAbstractItemView::NoSelection);
+    view->setIconSize(QSize(50,50));
+    view->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    // view->setViewMode(QListView::IconMode);
+    view->setOrientation(QListView::LeftToRight,false);
+    view->setResizeMode(QListView::Adjust);
 
-       item02->setSizeHint(QSize(70,70));
+    view->itemdelegate = new CustomItemDelegate(view);
+    view->setItemDelegate(view->itemdelegate);
+    DViewItemAction *act = new DViewItemAction;
 
-       title_table->setItemWidget(item02,view);
-       title_table->addItem(item02);
-       listDlistView.append(view);
+    act->setText(music.artist);
+    act->setFontSize(DFontSizeManager::T8);
+    act->setTextColorRole(DPalette::TextTitle );
+    act->setParent(view);
+
+    item1->setTextAlignment(Qt::AlignTop | Qt::AlignLeft);
+    item1->setTextActionList({act});
+    item0->setTextAlignment(Qt::AlignCenter);
+    item11->setTextAlignment(Qt::AlignCenter);
+    item1->setTextAlignment(Qt::AlignCenter);
+    item2->setTextAlignment(Qt::AlignCenter);
+    item3->setTextAlignment(Qt::AlignCenter);
+    item0->setSizeHint(QSize(40,70));
+    item11->setSizeHint(QSize(90,70));
+    item1->setSizeHint(QSize(150,70));
+    item2->setSizeHint(QSize(300,70));
+    item3->setSizeHint(QSize(100,70));
+    item0->setEditable(false);
+    item11->setEditable(false);
+    item1->setEditable(false);
+    item2->setEditable(false);
+    item3->setEditable(false);
+    view->addItem(rowNumber);
+
+    model->appendRow(item0);
+    model->appendRow(item11);
+    model->appendRow(item1);
+    model->appendRow(item2);
+    model->appendRow(item3);
+
+
+    QListWidgetItem* item02 = new QListWidgetItem(title_table);
+
+    item02->setSizeHint(QSize(70,70));
+
+    title_table->setItemWidget(item02,view);
+    title_table->addItem(item02);
+    listDlistView.append(view);
+
+}void MusicTable::onBtPlayAll(){
+
 
 }
- void MusicTable::play(int index ) {
+QString MusicTable::getUrlFromListView(int index){
+    QListWidgetItem *item = title_table->item( index);
+    if (item) {
 
-       auto &musicplayer=MusicPlayer::instance();
-       musicplayer.locallist->setCurrentIndex(index);
-       musicplayer.play();
-}
-void MusicTable::bt_playAll(){
-    auto &musicplayer=MusicPlayer::instance();
-    musicplayer.locallist->setCurrentIndex(0);
-    musicplayer.play();
+        QWidget *widget = title_table->itemWidget(item);
+        if (widget) {
+
+            CustomListView *listView = qobject_cast<CustomListView*>(widget);
+            return listView->url;
+
+        }
+         }
+   qDebug()<<"Can't get information from CustomListView[0]";
+   return QString();
 }
 
+void MusicTable::playFromListView(int index){
+       QListWidgetItem *item = title_table->item( index);
+    if (item) {
+
+        QWidget *widget = title_table->itemWidget(item);
+        if (widget) {
+
+            CustomListView *listView = qobject_cast<CustomListView*>(widget);
+
+            listView->play();
+
+            title_table->setCurrentRow(index);
+            return ;
+        }
+         }
+   qDebug()<<"Can't get information from CustomListView[0]";
+
+}
 
 void CustomListView::mouseDoubleClickEvent(QMouseEvent *event) {
-       emit tableWidget->temp(this->number);
-       QAbstractItemView::mouseDoubleClickEvent(event);
-}
 
+    this->play();
+}
+void CustomListView::play(){
+    MusicPlayer::instance().play(url);
+}
 void MusicTable::LoadStyleSheet()
 {
     QFile file(":/asset/qss/musictb.qss");
@@ -279,20 +308,45 @@ void MusicTable::LoadStyleSheet()
 
 void MusicTable::setTheme(DGuiApplicationHelper::ColorType theme){
 
-//    if(theme==DGuiApplicationHelper::LightType){
-//        QPalette palette = this->palette();
-//        palette.setColor(QPalette::Background, Qt::white);
+    //    if(theme==DGuiApplicationHelper::LightType){
+    //        QPalette palette = this->palette();
+    //        palette.setColor(QPalette::Background, Qt::white);
 
-//    }else {
-//        QPalette palette = this->palette();
-//        palette.setColor(QPalette::Background,Qt::black);
+    //    }else {
+    //        QPalette palette = this->palette();
+    //        palette.setColor(QPalette::Background,Qt::black);
 
-//    }
+    //    }
 }
 void MusicTable::onResetWindowSize(int width){
     for(auto i : listDlistView){
-       i->itemdelegate->factor=((width-900)*5/18);
-       //qDebug()<<"factor:"<<i->itemdelegate->factor;
+        i->itemdelegate->factor=((width-900)*5/18);
+        //qDebug()<<"factor:"<<i->itemdelegate->factor;
     }
 }
 
+void MusicTable::onSearchTextChange(QString text){
+    for (int i = 0; i <title_table->count(); ++i) {
+        bool matchFound = false;
+        QListWidgetItem *item = title_table->item(i);
+        if (item) {
+            QWidget *widget = title_table->itemWidget(item);
+            if (widget) {
+                QListView *listView = qobject_cast<QListView *>(widget);
+                if (listView) {
+                    QModelIndex index = listView->model()->index(3, 0);
+                    QString text1 = listView->model()->data(index).toString();
+
+                    if ( text1.contains(text, Qt::CaseInsensitive)) {
+                        matchFound = true;
+                    }
+
+                }
+            }
+
+
+        }
+        title_table->setRowHidden(i, !matchFound);
+    }
+
+}

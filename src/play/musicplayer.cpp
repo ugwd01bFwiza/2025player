@@ -17,17 +17,22 @@
 MusicPlayer::MusicPlayer()
 {
 
-    locallist=new QMediaPlaylist(this);
-    this->setPlaylist(locallist);
 
+    player=new QMediaPlayer;
     //QtConcurrent::run([this]() {  });
     InitLocateMusic();
     readList(DataBase::Instance(),"locallist");
-    for(auto i : MMetalist){
-        locallist->addMedia(QUrl::fromLocalFile(i.url));
-    }
+    connect(player, &QMediaPlayer::mediaStatusChanged, [this](QMediaPlayer::MediaStatus status) {
+        if (status == QMediaPlayer::LoadedMedia) {
+            player->play();
+        }
+    });
 
 }
+void MusicPlayer::play(QString url){
+    player->setMedia(QUrl::fromLocalFile(url));
+   }
+
 ///如果数据库没有的话，从本地读元信息传进数据库
 void MusicPlayer::InitLocateMusic() {
     QString homePath = QDir::homePath();
@@ -47,7 +52,7 @@ void MusicPlayer::InitLocateMusic() {
             QString filePath = fileInfo.absoluteFilePath();
             if(isUrlInDatabase(DataBase::Instance(),filePath,"locallist")){
                 continue;
-             }
+            }
 
             // qDebug() << "Processing file: " << filePath;
             TagLib::FileRef f(filePath.toStdString().c_str());
@@ -63,43 +68,43 @@ void MusicPlayer::InitLocateMusic() {
 ///从数据库读元信息
 void MusicPlayer::readList(DataBase*db, const QString &playListName){
 
-        QSqlQuery sql_query(db->db);
-        QString sqlStatement;
-        QByteArray byteArray;
-        QString url;
-        QString title;
-        QString artist;
-        QString album;
-        QString duration;
-        QPixmap poster;
-        sqlStatement = QString("select url,title,artist,album,duration,poster from %1;").arg(playListName);
-        if (!sql_query.exec(sqlStatement)) {
-            qDebug() << "无法更新歌单信息：" << playListName << sql_query.lastError();
-            return;
+    QSqlQuery sql_query(db->db);
+    QString sqlStatement;
+    QByteArray byteArray;
+    QString url;
+    QString title;
+    QString artist;
+    QString album;
+    QString duration;
+    QPixmap poster;
+    sqlStatement = QString("select url,title,artist,album,duration,poster from %1;").arg(playListName);
+    if (!sql_query.exec(sqlStatement)) {
+        qDebug() << "无法更新歌单信息：" << playListName << sql_query.lastError();
+        return;
+    }
+    while(sql_query.next()) {
+
+        url = sql_query.value(0).toString();
+        title = sql_query.value(1).toString();
+        artist = sql_query.value(2).toString();
+        album = sql_query.value(3).toString();
+
+        duration = sql_query.value(4).toString();
+        byteArray = sql_query.value(5).toByteArray();
+
+
+        poster.loadFromData(byteArray);
+
+        if (poster.isNull()) {
+            poster.load(":/icon/cd.png");
         }
-        while(sql_query.next()) {
 
-            url = sql_query.value(0).toString();
-            title = sql_query.value(1).toString();
-            artist = sql_query.value(2).toString();
-            album = sql_query.value(3).toString();
+        if (url.isNull()) {//过滤不存在的歌曲
+            continue;
+        }
+        MMetalist.append(MetaData(url,title,artist,album,duration.toInt(),poster));
 
-            duration = sql_query.value(4).toString();
-            byteArray = sql_query.value(5).toByteArray();
-
-
-            poster.loadFromData(byteArray);
-
-            if (poster.isNull()) {
-                poster.load(":/icon/cd.png");
-            }
-
-            if (url.isNull()) {//过滤不存在的歌曲
-                continue;
-            }
-             MMetalist.append(MetaData(url,title,artist,album,duration.toInt(),poster));
-
-}
+    }
 
 
 
@@ -108,28 +113,28 @@ void MusicPlayer::readList(DataBase*db, const QString &playListName){
 
 ///判断数据库内是否存在对应url
 bool MusicPlayer::isUrlInDatabase(DataBase *db, const QString &url, const QString &playListName){
-        QSqlQuery sql_query(db->db);
-        QString sqlStatement = QString("SELECT COUNT(*) FROM %1 WHERE url = :url;").arg(playListName);
+    QSqlQuery sql_query(db->db);
+    QString sqlStatement = QString("SELECT COUNT(*) FROM %1 WHERE url = :url;").arg(playListName);
 
-        sql_query.prepare(sqlStatement);
-        sql_query.bindValue(":url", url);
+    sql_query.prepare(sqlStatement);
+    sql_query.bindValue(":url", url);
 
-        if (!sql_query.exec()) {
-            qDebug() << "查询执行失败:" << sql_query.lastError();
-            return false;  // 如果查询失败，返回 false
+    if (!sql_query.exec()) {
+        qDebug() << "查询执行失败:" << sql_query.lastError();
+        return false;  // 如果查询失败，返回 false
+    }
+
+    if (sql_query.next()) {
+        int count = sql_query.value(0).toInt();
+        if (count > 0) {
+
+            return true;
+        } else {
+
+            return false;
         }
-
-        if (sql_query.next()) {
-            int count = sql_query.value(0).toInt();
-            if (count > 0) {
-
-                return true;
-            } else {
-
-                return false;
-            }
-        }
-        return false;
+    }
+    return false;
 }
 ///将本地元信息传至数据库
 void MusicPlayer::loadLocalMusic(const QString &url,const QString &playListName) {
@@ -168,10 +173,10 @@ void MusicPlayer::loadLocalMusic(const QString &url,const QString &playListName)
         //covpix.loadFromData((const uchar *)albumArt.data().data(), albumArt.data().size());
         covpix.loadFromData(reinterpret_cast<const uchar*>(albumArt.data().data()), albumArt.data().size());
         if (!covpix.isNull()) {
-           // qDebug() << "读取M4A封面信息成功";
+            // qDebug() << "读取M4A封面信息成功";
         } else {
             covpix.load(":/asset/image/logo.png");
-           // qDebug() << "读取音乐封面信息失败";
+            // qDebug() << "读取音乐封面信息失败";
         }
     } else if (fileExtension == "mp3") {
         // 处理 mp3 文件

@@ -1,16 +1,16 @@
 
-#bt_play, #bt_pre, #bt_stop, #bt_next, #bt_volume, #bt_screen{
+#bt_play, #bt_pre, #bt_stop, #bt_next, #bt_volume, #bt_screen,#bt_loop{
     background-color: white;
     border-style:none;
 }
 
-#bt_play:hover, #bt_pre:hover, #bt_stop:hover, #bt_next:hover, #bt_volume:hover, #bt_screen:hover{
+#bt_play:hover, #bt_pre:hover, #bt_stop:hover, #bt_next:hover, #bt_volume:hover, #bt_screen:hover,#bt_loop:hover{
     background-color: #f7f7f7;
     border-radius:8px;
      border-style:none;
 }
 
-#bt_play:pressed, #bt_pre:pressed, #bt_stop:pressed, #bt_next:pressed, #bt_volume:pressed, #bt_screen:pressed {
+#bt_play:pressed, #bt_pre:pressed, #bt_stop:pressed, #bt_next:pressed, #bt_volume:pressed, #bt_screen:pressed,#bt_loop:pressed{
     background-color: #0080fe;
 
     border-style:inset;

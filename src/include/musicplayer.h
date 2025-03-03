@@ -9,14 +9,14 @@
 
 
 
-class MusicPlayer : public QMediaPlayer
+class MusicPlayer : public QObject
 {
     Q_OBJECT
 public:
     MusicPlayer();
+    QMediaPlayer* player;
 
 
-    QMediaPlaylist *locallist;
 
     static MusicPlayer& instance() {
             static MusicPlayer player;
@@ -28,6 +28,11 @@ private:
 void readList(DataBase*db,const QString &playListName);
 void loadLocalMusic(const QString &url,const QString &playListName);
 bool isUrlInDatabase(DataBase *db, const QString &url, const QString &playListName);
+public slots:
+void play(QString url);
+
+
 };
+
 
 #endif // MUSICPLAYER_H

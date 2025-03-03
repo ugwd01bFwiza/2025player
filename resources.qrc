@@ -16,5 +16,10 @@
         <file>asset/qss/mainwindow_dark.qss</file>
         <file>asset/qss/navwidget_dark.qss</file>
         <file>asset/qss/cbar.qss</file>
+        <file>asset/image/video2.PNG</file>
+        <file>asset/image/shuffle.png</file>
+        <file>asset/image/music2.PNG</file>
+        <file>asset/image/queue.png</file>
+        <file>asset/image/loop.png</file>
     </qresource>
 </RCC>

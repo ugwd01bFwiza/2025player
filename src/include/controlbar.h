@@ -9,18 +9,28 @@
 #include<DSlider>
 DWIDGET_USE_NAMESPACE
 ///最下面控制栏
+enum LoopState{
+
+   Loop,
+   Random,
+   Queue,
+
+};
 class ControlBar : public QFrame
 {
     Q_OBJECT
 public:
     explicit ControlBar(QWidget *parent = nullptr);
 
+    LoopState loopstate=Loop;
     DIconButton *btplay;
     DIconButton *btpre;
     DIconButton *btstop;
     DIconButton *btnex;
+    DIconButton *btloop;
     //DIconButton *btvolume=new DIconButton(this);
     DIconButton *btscreen;
+    MusicTable*table;
     MusicPlayer* mediaPlayer;
     QTimer* cTimer;
     DSlider* processSlider;
@@ -34,7 +44,9 @@ public:
     int preVolume=100;
     int  currenttime;
     void LoadStyleSheet();
-
+void PlaySliderValueReset();
+private:
+    void ChangeLoopBtIcon();
 public slots:
     void stchange(QMediaPlayer::State state);
     void playslot();
@@ -43,13 +55,14 @@ public slots:
     void preslot();
     void stopslot();
     void nexslot();
-    void mediachange(int index);
+    void mediachange(QMediaPlayer::MediaStatus state);
     void sliderchange(int value);
     void volumesetting(int value);
     void processsetting();
     void switchvolume();
     void readVolume(const QString &filePath);
 
+    void onLoopChange();
 };
 
 #endif // CONTROLBAR_H

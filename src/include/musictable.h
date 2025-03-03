@@ -14,6 +14,7 @@
 #include<DLabel>
 #include<QItemDelegate>
 #include<QListWidget>
+#include<DLineEdit>
  DWIDGET_USE_NAMESPACE
  class CustomListView;  // 前向声明 CustomListView
 
@@ -27,6 +28,7 @@
 //     DPushButton *selectDir;
 //     DLabel *displayLabel[2];
 //     QVBoxLayout *local_VBoxLayout;
+     DLineEdit *searchEdit;
      QHBoxLayout *display_HBoxLayout;
      QStackedWidget *page;
      QList<CustomListView*> listDlistView;
@@ -34,14 +36,16 @@
 
      void Addmusic(const MetaData& music);
      void onResetWindowSize(int width);
+  QString getUrlFromListView(int index);
 
+  void playFromListView(int index);
  public slots:
-     void play(int index);
-     void setTheme(DGuiApplicationHelper::ColorType);
+         void setTheme(DGuiApplicationHelper::ColorType);
 
  private slots:
-     void bt_playAll();
+     void onBtPlayAll();
      // void bt_selectDir();
+     void onSearchTextChange(QString text);
 
  private:
      void LoadStyleSheet();
@@ -49,13 +53,11 @@
      void initLayout();
      void initItem();
 
- signals:
+    signals:
      void temp(int index);
  };
 
-
-
-///调整Dlistview项间距
+ ///调整Dlistview项间距
 class CustomItemDelegate : public QItemDelegate {
 public:
     int factor = 1;
@@ -76,11 +78,13 @@ public:
 class CustomListView : public DListView {
     Q_OBJECT
 public:
+    QString url;
     MusicTable *tableWidget;
     CustomItemDelegate *itemdelegate;
     int number;
     void mouseDoubleClickEvent(QMouseEvent *event);
 
+    void play();
 };
 
 #endif // MEDIATABLE_H
