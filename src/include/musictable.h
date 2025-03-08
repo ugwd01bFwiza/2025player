@@ -15,6 +15,7 @@
 #include<QItemDelegate>
 #include<QListWidget>
 #include<DLineEdit>
+#include<QStackedWidget>
  DWIDGET_USE_NAMESPACE
  class CustomListView;  // 前向声明 CustomListView
 
@@ -23,7 +24,8 @@
  public:
      MusicTable();
 
-     QListWidget *title_table;
+     DListWidget *music_table;
+     DListView *video_table;
      DPushButton *playAll;
 //     DPushButton *selectDir;
 //     DLabel *displayLabel[2];
@@ -34,7 +36,9 @@
      QList<CustomListView*> listDlistView;
      QFrame *qf;
 
-     void Addmusic(const MetaData& music);
+
+       void Addmusic(const MetaData& music);
+       void AddVideo(int i);
      void onResetWindowSize(int width);
   QString getUrlFromListView(int index);
 

@@ -1,3 +1,4 @@
+#include<QFileIconProvider>
 #include "musictable.h"
 #include<QVBoxLayout>
 #include<DTableWidget>
@@ -31,48 +32,96 @@ MusicTable::MusicTable()
 
 void MusicTable::initItem(){
 
-    title_table = new QListWidget(this);
+    music_table = new QListWidget(this);
 
 
-    title_table->setObjectName("table_music");
+    music_table->setObjectName("table_music");
     QList <QString> tableList;//
     //QStandardItemModel* headmodel = new QStandardItemModel;
-    title_table->setSortingEnabled(false);
+    music_table->setSortingEnabled(false);
 
     tableList << "#" << "音乐标题"  << "专辑" << "时长" ;
-    title_table->setIconSize(QSize(50,50));
+    music_table->setIconSize(QSize(50,50));
 
     //打开右键菜单属性
-    title_table->setContextMenuPolicy(Qt::CustomContextMenu);
+    music_table->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    title_table->setAlternatingRowColors(false);
+    music_table->setAlternatingRowColors(false);
     //设置表格内容不可编辑
-    title_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    music_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //设置为行选择
-    title_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    music_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     //设置最后一栏自适应长度
     //    title_table->horizontalHeader()->setStretchLastSection(true);
     //删除网格表
     //    title_table->setShowGrid(false);
     //去除边框线
-    title_table->setFrameShape(QFrame::NoFrame);
+    music_table->setFrameShape(QFrame::NoFrame);
     //去除选中虚线框
-    title_table->setFocusPolicy(Qt::NoFocus);
+    music_table->setFocusPolicy(Qt::NoFocus);
 
     //设置点击单元格时，表头项不高亮
     //    title_table->horizontalHeader()->setHighlightSections(false);
     //    title_table->verticalHeader()->setHighlightSections(false);
     //设置只能选中一个目标
-    title_table->setSelectionMode(QAbstractItemView::SingleSelection);
+    music_table->setSelectionMode(QAbstractItemView::SingleSelection);
     //设置垂直滚动条最小宽度
-    title_table->verticalScrollBar()->setMaximumWidth(7);
-    title_table->setResizeMode(QListView::Adjust);
+    music_table->verticalScrollBar()->setMaximumWidth(7);
+    music_table->setResizeMode(QListView::Adjust);
     //    title_table->verticalHeader()->setObjectName("music_verticalHeader");
     auto &musicplayer=MusicPlayer::instance();
 
     for (auto& i : musicplayer.MMetalist)
         Addmusic(i);
+ video_table = new DListView(this);
+ video_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    video_table-> setViewMode(QListView::IconMode);
+           video_table->   setIconSize(QSize(140, 140));
+            video_table->  setGridSize(QSize(200, 200));
+           video_table->   setSpacing(10);
+            video_table->  setResizeMode(QListView::Adjust);
+            video_table->  setMovement(QListView::Static);
+//           video_table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+//            video_table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+            video_table->setSpacing(30);
+           QStandardItemModel *model = new QStandardItemModel(this);
+           QString homePath = QDir::homePath();
+           QString mediaPath = homePath + "/Desktop/media/";  // 拼接桌面路径和 media 文件夹
+
+           QDir dir(mediaPath);
+           if (!dir.exists()) return;
+
+           // 只匹配常见视频格式
+           QStringList filters = {"*.mp4", "*.avi", "*.mkv", "*.mov", "*.flv", "*.wmv"};
+           QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files);
+
+           // 使用 Lambda 读取文件并添加到 video_table
+           auto addVideoItems = [&](QFileInfoList files) {
+               for (const QFileInfo &fileInfo : files) {
+                   // 获取文件图标
+                   QFileIconProvider iconProvider;
+                   QIcon icon = iconProvider.icon(fileInfo); // 获取文件图标
+
+                   // 检查是否获取到图标，如果没有则使用默认图标
+                   if (icon.isNull()) {
+                       icon = QIcon(":/asset/image/video2.PNG");  // 使用默认图标路径
+                   }
+
+                   // 创建 QStandardItem 并设置图标和名称
+                   QStandardItem *item = new QStandardItem(icon, fileInfo.fileName());
+//                   item->setSizeHint(QSize(160, 160)); // 设置图标大小
+
+                   // 将 item 添加到 model 中
+                   model->appendRow(item);
+               }
+           };
+
+
+           // 调用 Lambda 处理文件列表
+           addVideoItems(fileList);
+
+           video_table->setModel(model);
 
     playAll = new DPushButton(this);
     playAll->setText("播放全部");
@@ -85,6 +134,9 @@ void MusicTable::initItem(){
 
 
 }
+void MusicTable::AddVideo(int i){
+  }
+
 void MusicTable::localMusicLayout()
 {
     //    display_HBoxLayout = new QHBoxLayout();
@@ -144,13 +196,16 @@ void MusicTable::initLayout(){
     qf->setLayout(temp);
     //temp->setContentsMargins(10,10,0,0);
     VLayout->addWidget(qf);
-    VLayout->addWidget(title_table);
+    page = new QStackedWidget(this);
+    page->addWidget(music_table);
+    page->addWidget(video_table);
+       VLayout->addWidget(page);
     //VLayout->setContentsMargins(0,0,0,0);
     VLayout->setStretch(0,1);
     VLayout->setStretch(1,8);
     this->setLayout(VLayout);
-    title_table->setBackgroundRole(QPalette::NoRole);
-    title_table->setSpacing(10);
+    music_table->setBackgroundRole(QPalette::NoRole);
+    music_table->setSpacing(10);
 }
 
 void MusicTable::Addmusic(const MetaData&music){
@@ -170,7 +225,7 @@ void MusicTable::Addmusic(const MetaData&music){
 
 
 
-    int row = title_table->count();
+    int row = music_table->count();
 
     //music_Table->setRowHeight(row,200);
     // 设置每列的值;
@@ -238,12 +293,12 @@ void MusicTable::Addmusic(const MetaData&music){
     model->appendRow(item3);
 
 
-    QListWidgetItem* item02 = new QListWidgetItem(title_table);
+    QListWidgetItem* item02 = new QListWidgetItem(music_table);
 
     item02->setSizeHint(QSize(70,70));
 
-    title_table->setItemWidget(item02,view);
-    title_table->addItem(item02);
+    music_table->setItemWidget(item02,view);
+    music_table->addItem(item02);
     listDlistView.append(view);
 
 }void MusicTable::onBtPlayAll(){
@@ -251,10 +306,10 @@ void MusicTable::Addmusic(const MetaData&music){
 
 }
 QString MusicTable::getUrlFromListView(int index){
-    QListWidgetItem *item = title_table->item( index);
+    QListWidgetItem *item = music_table->item( index);
     if (item) {
 
-        QWidget *widget = title_table->itemWidget(item);
+        QWidget *widget = music_table->itemWidget(item);
         if (widget) {
 
             CustomListView *listView = qobject_cast<CustomListView*>(widget);
@@ -267,17 +322,17 @@ QString MusicTable::getUrlFromListView(int index){
 }
 
 void MusicTable::playFromListView(int index){
-       QListWidgetItem *item = title_table->item( index);
+       QListWidgetItem *item = music_table->item( index);
     if (item) {
 
-        QWidget *widget = title_table->itemWidget(item);
+        QWidget *widget = music_table->itemWidget(item);
         if (widget) {
 
             CustomListView *listView = qobject_cast<CustomListView*>(widget);
 
             listView->play();
 
-            title_table->setCurrentRow(index);
+            music_table->setCurrentRow(index);
             return ;
         }
          }
@@ -326,11 +381,11 @@ void MusicTable::onResetWindowSize(int width){
 }
 
 void MusicTable::onSearchTextChange(QString text){
-    for (int i = 0; i <title_table->count(); ++i) {
+    for (int i = 0; i <music_table->count(); ++i) {
         bool matchFound = false;
-        QListWidgetItem *item = title_table->item(i);
+        QListWidgetItem *item = music_table->item(i);
         if (item) {
-            QWidget *widget = title_table->itemWidget(item);
+            QWidget *widget = music_table->itemWidget(item);
             if (widget) {
                 QListView *listView = qobject_cast<QListView *>(widget);
                 if (listView) {
@@ -346,7 +401,7 @@ void MusicTable::onSearchTextChange(QString text){
 
 
         }
-        title_table->setRowHidden(i, !matchFound);
+        music_table->setRowHidden(i, !matchFound);
     }
 
 }

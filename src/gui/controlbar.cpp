@@ -209,7 +209,7 @@ void ControlBar::playslot(){
     }
 }
 void ControlBar::preslot(){
-  int index = temp->title_table->currentRow();
+  int index = temp->music_table->currentRow();
   if (index>0){
     temp->playFromListView(index-1);
 }
@@ -221,8 +221,8 @@ void ControlBar::stopslot(){
 }
 void ControlBar::nexslot()
 {
-    int index = temp->title_table->currentRow();
-    if (index<temp->title_table->count()){
+    int index = temp->music_table->currentRow();
+    if (index<temp->music_table->count()){
                temp->playFromListView(index+1);
 
     }
@@ -311,9 +311,9 @@ void ControlBar::mediachange(QMediaPlayer::MediaStatus state){
             nexslot();
         }
         else{
-            int index = temp->title_table->currentRow();
+            int index = temp->music_table->currentRow();
                         int randomNumber = QRandomGenerator::global()->bounded(0, index);
-                         if (index<temp->title_table->count()){
+                         if (index<temp->music_table->count()){
                        temp->playFromListView(randomNumber);
 
             }

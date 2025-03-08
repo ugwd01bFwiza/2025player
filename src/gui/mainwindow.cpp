@@ -24,7 +24,7 @@ MainWindow::MainWindow()
     this->setTitlebarShadowEnabled(false);
     this->setWindowRadius(18);
     this->setObjectName("main_window");
-    this->setMinimumSize(QSize(1450, 800));
+    this->resize(QSize(1450, 800));
     this->setShadowColor(Qt::transparent);
     this->setEnableSystemResize(true);
     this->LoadStyleSheet(":/asset/qss/mainwindow_dark.qss");
@@ -120,7 +120,7 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
 //    }
     if (row==0)
     {
-        page->setCurrentIndex(0);
+        music_table->page->setCurrentIndex(0);
 //        if(cbar->mediaPlayer!=nullptr){
 //            cbar->mediaPlayer->stop();
 //        }
@@ -128,8 +128,8 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
         cbar->readVolume("");
     }
     else if(row==1){
-        page->setCurrentIndex(1);
 
+        music_table->page->setCurrentIndex(1);
     }
 
 }
