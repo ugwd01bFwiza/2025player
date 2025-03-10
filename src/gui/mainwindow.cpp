@@ -33,7 +33,7 @@ MainWindow::MainWindow()
 ;
 
     bar->setBackgroundTransparent(true);
-    bar->setFixedHeight(70);
+    bar->setFixedHeight(50);
     bar->setSeparatorVisible(false);
     bar->setAutoHideOnFullscreen(true);
     bar->setSwitchThemeMenuVisible(true);

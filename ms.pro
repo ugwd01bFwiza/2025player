@@ -22,7 +22,9 @@ SOURCES +=src/main.cpp \
     src/gui/musictable.cpp \
 src/play/database.cpp\
     src/play/musicplayer.cpp \
-    src/play/metadata.cpp
+    src/play/metadata.cpp \
+    src/gui/settingsmanager.cpp \
+    src/gui/pathselector.cpp
 
 
 RESOURCES += resources.qrc
@@ -34,7 +36,9 @@ HEADERS +=src/include/mainwindow.h \
     src/include/musictable.h \
     src/include/musicplayer.h\
 src/include/database.h \
-    src/include/metadata.h
+    src/include/metadata.h \
+    src/include/settingsmanager.h \
+    src/include/pathselector.h
 
 DISTFILES +=
 

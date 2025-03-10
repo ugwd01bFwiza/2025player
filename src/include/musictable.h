@@ -1,6 +1,7 @@
 #ifndef MEDIATABLE_H
 #define MEDIATABLE_H
 #include"musicplayer.h"
+#include"pathselector.h"
 #include<QDir>
 #include<DTableWidget>
 #include<QStandardItemModel>
@@ -27,10 +28,10 @@
      DListWidget *music_table;
      DListView *video_table;
      DPushButton *playAll;
-//     DPushButton *selectDir;
+     DLineEdit *searchEdit ;
 //     DLabel *displayLabel[2];
 //     QVBoxLayout *local_VBoxLayout;
-     DLineEdit *searchEdit;
+     PathSelector*pathSelector;
      QHBoxLayout *display_HBoxLayout;
      QStackedWidget *page;
      QList<CustomListView*> listDlistView;

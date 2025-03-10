@@ -1,4 +1,5 @@
 #include<QFileIconProvider>
+#include"pathselector.h"
 #include "musictable.h"
 #include<QVBoxLayout>
 #include<DTableWidget>
@@ -73,55 +74,55 @@ void MusicTable::initItem(){
 
     for (auto& i : musicplayer.MMetalist)
         Addmusic(i);
- video_table = new DListView(this);
- video_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    video_table = new DListView(this);
+    video_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     video_table-> setViewMode(QListView::IconMode);
-           video_table->   setIconSize(QSize(140, 140));
-            video_table->  setGridSize(QSize(200, 200));
-           video_table->   setSpacing(10);
-            video_table->  setResizeMode(QListView::Adjust);
-            video_table->  setMovement(QListView::Static);
-//           video_table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-//            video_table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-            video_table->setSpacing(30);
-           QStandardItemModel *model = new QStandardItemModel(this);
-           QString homePath = QDir::homePath();
-           QString mediaPath = homePath + "/Desktop/media/";  // 拼接桌面路径和 media 文件夹
+    video_table->   setIconSize(QSize(140, 140));
+    video_table->  setGridSize(QSize(200, 200));
+    video_table->   setSpacing(10);
+    video_table->  setResizeMode(QListView::Adjust);
+    video_table->  setMovement(QListView::Static);
+    //           video_table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    //            video_table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    video_table->setSpacing(30);
+    QStandardItemModel *model = new QStandardItemModel(this);
+    QString homePath = QDir::homePath();
+    QString mediaPath = homePath + "/Desktop/media/";  // 拼接桌面路径和 media 文件夹
 
-           QDir dir(mediaPath);
-           if (!dir.exists()) return;
+    QDir dir(mediaPath);
+    if (!dir.exists()) return;
 
-           // 只匹配常见视频格式
-           QStringList filters = {"*.mp4", "*.avi", "*.mkv", "*.mov", "*.flv", "*.wmv"};
-           QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files);
+    // 只匹配常见视频格式
+    QStringList filters = {"*.mp4", "*.avi", "*.mkv", "*.mov", "*.flv", "*.wmv"};
+    QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files);
 
-           // 使用 Lambda 读取文件并添加到 video_table
-           auto addVideoItems = [&](QFileInfoList files) {
-               for (const QFileInfo &fileInfo : files) {
-                   // 获取文件图标
-                   QFileIconProvider iconProvider;
-                   QIcon icon = iconProvider.icon(fileInfo); // 获取文件图标
+    // 使用 Lambda 读取文件并添加到 video_table
+    auto addVideoItems = [&](QFileInfoList files) {
+        for (const QFileInfo &fileInfo : files) {
+            // 获取文件图标
+            QFileIconProvider iconProvider;
+            QIcon icon = iconProvider.icon(fileInfo); // 获取文件图标
 
-                   // 检查是否获取到图标，如果没有则使用默认图标
-                   if (icon.isNull()) {
-                       icon = QIcon(":/asset/image/video2.PNG");  // 使用默认图标路径
-                   }
+            // 检查是否获取到图标，如果没有则使用默认图标
+            if (icon.isNull()) {
+                icon = QIcon(":/asset/image/video2.PNG");  // 使用默认图标路径
+            }
 
-                   // 创建 QStandardItem 并设置图标和名称
-                   QStandardItem *item = new QStandardItem(icon, fileInfo.fileName());
-//                   item->setSizeHint(QSize(160, 160)); // 设置图标大小
+            // 创建 QStandardItem 并设置图标和名称
+            QStandardItem *item = new QStandardItem(icon, fileInfo.fileName());
+            //                   item->setSizeHint(QSize(160, 160)); // 设置图标大小
 
-                   // 将 item 添加到 model 中
-                   model->appendRow(item);
-               }
-           };
+            // 将 item 添加到 model 中
+            model->appendRow(item);
+        }
+    };
 
 
-           // 调用 Lambda 处理文件列表
-           addVideoItems(fileList);
+    // 调用 Lambda 处理文件列表
+    addVideoItems(fileList);
 
-           video_table->setModel(model);
+    video_table->setModel(model);
 
     playAll = new DPushButton(this);
     playAll->setText("播放全部");
@@ -135,7 +136,7 @@ void MusicTable::initItem(){
 
 }
 void MusicTable::AddVideo(int i){
-  }
+}
 
 void MusicTable::localMusicLayout()
 {
@@ -147,10 +148,6 @@ void MusicTable::localMusicLayout()
     //    displayLabel[1] = new DLabel(this);
     //    displayLabel[1]->setText("共0首");
     //    displayLabel[1]->setObjectName("numberlabel");
-    //    selectDir = new DPushButton(this);
-    //    selectDir->setText("选择目录");
-    //    selectDir->setObjectName("selectButton");
-    //    selectDir->setCursor(Qt::PointingHandCursor);
 
 
     //    QSpacerItem *display_hSpacer = new QSpacerItem(200,10,
@@ -173,6 +170,7 @@ void MusicTable::initLayout(){
     QSpacerItem *Button_HSpacer = new QSpacerItem(200,20,
                                                   QSizePolicy::Expanding,
                                                   QSizePolicy::Expanding);
+    //从左到右 存储table上方控件的布局
     QHBoxLayout *button_HBoxLayout = new QHBoxLayout();
     searchEdit = new DLineEdit();
     searchEdit->setPlaceholderText("搜索本地音乐");
@@ -183,9 +181,16 @@ void MusicTable::initLayout(){
     //设置ICON在搜索框右边
     searchEdit->addAction(searchAction);
     button_HBoxLayout->addWidget(playAll);
+    //右边存储搜索栏和selectdir的布局
+
+    pathSelector = new PathSelector (this);
+    QVBoxLayout * right_VBoxLayout = new QVBoxLayout();
+
+    right_VBoxLayout->addWidget(searchEdit);
+    right_VBoxLayout->addWidget(pathSelector);
 
     button_HBoxLayout->addSpacerItem(Button_HSpacer);
-    button_HBoxLayout->addWidget(searchEdit);
+    button_HBoxLayout->addLayout(right_VBoxLayout);
     qf= new QFrame();
     qf->setObjectName("tableqf");
     QVBoxLayout *temp = new QVBoxLayout();
@@ -199,7 +204,7 @@ void MusicTable::initLayout(){
     page = new QStackedWidget(this);
     page->addWidget(music_table);
     page->addWidget(video_table);
-       VLayout->addWidget(page);
+    VLayout->addWidget(page);
     //VLayout->setContentsMargins(0,0,0,0);
     VLayout->setStretch(0,1);
     VLayout->setStretch(1,8);
@@ -316,13 +321,13 @@ QString MusicTable::getUrlFromListView(int index){
             return listView->url;
 
         }
-         }
-   qDebug()<<"Can't get information from CustomListView[0]";
-   return QString();
+    }
+    qDebug()<<"Can't get information from CustomListView[0]";
+    return QString();
 }
 
 void MusicTable::playFromListView(int index){
-       QListWidgetItem *item = music_table->item( index);
+    QListWidgetItem *item = music_table->item( index);
     if (item) {
 
         QWidget *widget = music_table->itemWidget(item);
@@ -335,8 +340,8 @@ void MusicTable::playFromListView(int index){
             music_table->setCurrentRow(index);
             return ;
         }
-         }
-   qDebug()<<"Can't get information from CustomListView[0]";
+    }
+    qDebug()<<"Can't get information from CustomListView[0]";
 
 }
 

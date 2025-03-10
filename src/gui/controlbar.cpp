@@ -31,8 +31,9 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     volumeSlider->setMaximum(100);
     volumeSlider->setLeftIcon(QIcon(":/asset/image/fvolume.PNG"));
     volumeSlider->setMaximumWidth(120);
-    volumeSlider->setIconSize(QSize(24,24));
-    btplay->setIcon(QIcon(":/asset/image/play.PNG"));
+
+    volumeSlider->setIconSize(QSize(22,22));
+     btplay->setIcon(QIcon(":/asset/image/play.PNG"));
     btplay->setIconSize(QSize(24,24));
     btplay->setFixedSize(QSize(36,36));
     btplay->setObjectName("bt_play");
