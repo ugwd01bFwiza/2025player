@@ -1,12 +1,12 @@
 QT += core gui dtkwidget
 QT += multimedia
 QT += sql
-INCLUDEPATH += /usr/include/taglib /usr/include/taglib-extras
+INCLUDEPATH += /usr/include/taglib 
 
 LIBS += -L/usr/lib -ltag
 
 
-QMAKE_CXXFLAGS += -I /usr/include/taglib -I /usr/include/taglib-extras
+QMAKE_CXXFLAGS += -I /usr/include/taglib 
 QMAKE_LIBS += -ltag
 
 
@@ -24,8 +24,8 @@ src/play/database.cpp\
     src/play/musicplayer.cpp \
     src/play/metadata.cpp \
     src/gui/settingsmanager.cpp \
-    src/gui/pathselector.cpp
-
+    src/gui/pathselector.cpp\
+src/gui/settingpage.cpp
 
 RESOURCES += resources.qrc
 INCLUDEPATH += $$PWD/src/include
@@ -38,8 +38,8 @@ HEADERS +=src/include/mainwindow.h \
 src/include/database.h \
     src/include/metadata.h \
     src/include/settingsmanager.h \
-    src/include/pathselector.h
-
+    src/include/pathselector.h\
+src/include/settingpage.h
 DISTFILES +=
 
 debug{

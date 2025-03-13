@@ -1,3 +1,5 @@
+
+///目前主要用数据库存音频等元信息
 #ifndef DATABASE_H
 #define DATABASE_H
 #include <QStringList>
@@ -32,7 +34,7 @@ public:
  
     bool saveMetaData(const QMap<QString, QString> &metaDataMap, const QString &playListName, const QPixmap &img, bool status);
 
-   
+    bool deleteByUrl(const QStringList &urllist,const QString&playListName);
     QStringList getUrlFromPlayList(const QString &playListName);
 private:
     DataBase();

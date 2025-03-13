@@ -1,3 +1,4 @@
+///最下面控制栏，调音量的
 #ifndef CONTROLBAR_H
 #define CONTROLBAR_H
 #include"musicplayer.h"
@@ -8,7 +9,6 @@
 #include<DLabel>
 #include<DSlider>
 DWIDGET_USE_NAMESPACE
-///最下面控制栏
 enum LoopState{
 
    Loop,

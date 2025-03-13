@@ -1,3 +1,4 @@
+///所有的多媒体文件都在这里展示,page目前存储了音视频页面
 #ifndef MEDIATABLE_H
 #define MEDIATABLE_H
 #include"musicplayer.h"

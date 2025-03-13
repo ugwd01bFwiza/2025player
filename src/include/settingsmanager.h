@@ -1,22 +1,24 @@
+///管理设置的类
+
 #ifndef SETTINGSMANAGER_H
 #define SETTINGSMANAGER_H
 
-#include <QString>
+#include <QSettings>
 #include <QStringList>
 #include <QKeySequence>
 
-class SettingsManager {
+class SettingsManager
+{
 public:
-    explicit SettingsManager(const QString &filePath);
-
+    SettingsManager(const QString &filePath);
     void saveSettings(const QStringList &paths, const QKeySequence &shortcut);
-
-    void loadSettings(QStringList &paths, QKeySequence &shortcut); // 原始
-    void loadSettings(QStringList &paths);                         // 只读路径
-    void loadSettings(QKeySequence &shortcut);                     // 只读快捷键
+    void loadSettings(QStringList &paths, QKeySequence &shortcut);
+    void loadSettings(QStringList &paths);
+    void loadSettings(QKeySequence &shortcut);
 
 private:
-    QString settingsFilePath;
+    QScopedPointer<QSettings> settings;
 };
 
-#endif // SETTINGSMANAGER_H
+
+#endif

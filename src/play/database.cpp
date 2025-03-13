@@ -183,3 +183,20 @@ DataBase::DataBase()
      }
      return urlList;
  }
+
+ bool DataBase::deleteByUrl(const QStringList &url,const QString&playListName){
+
+   QSqlQuery sql_query(db);
+   QString sqlStatement;
+   QStringList urlList = getUrlFromPlayList("url");
+   for(QString itUrl : urlList) {
+         sqlStatement = QString("delete from %1 where url = :url").arg(playListName);
+         sql_query.prepare(sqlStatement);
+         sql_query.bindValue(":url",itUrl);
+         if (!sql_query.exec()) {
+             qDebug() << "删除歌曲元数据失败：" << playListName << sql_query.lastError();
+             return false;
+         }
+   }
+   return true;
+ }

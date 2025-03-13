@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "qcoreapplication": "cpp",
+        "dmainwindow": "cpp",
+        "dguiapplicationhelper": "cpp",
+        "qmessagebox": "cpp",
+        "dscrollarea": "cpp",
+        "new": "cpp",
+        "qscrollarea": "cpp"
+    }
+}

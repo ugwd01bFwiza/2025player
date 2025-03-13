@@ -1,3 +1,4 @@
+///封装音乐元信息的类
 #ifndef METADATA_H
 #define METADATA_H
 #include"database.h"

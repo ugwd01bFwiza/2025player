@@ -1,100 +1,61 @@
 #include "settingsmanager.h"
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QDebug>
-#include<QFileInfo>
-#include<QDir>
+#include <QFileInfo>
+#include <QDir>
 
-SettingsManager::SettingsManager(const QString &filePath) : settingsFilePath(filePath) {
+SettingsManager::SettingsManager(const QString &filePath)
+{
     QFileInfo fileInfo(filePath);
     QDir dir = fileInfo.absoluteDir();
-
     if (!dir.exists()) {
-        if (!dir.mkpath(".")) {
-            qWarning() << "Failed to create directory:" << dir.absolutePath();
-        }
+        dir.mkpath(".");
     }
 
-    if (!fileInfo.exists()) {
-        QFile file(filePath);
-        if (file.open(QIODevice::WriteOnly)) {
-            QJsonObject defaultJson;
-            defaultJson["localPaths"] = QJsonArray();
-            defaultJson["shortcut"] = "";
+    settings.reset(new QSettings(filePath, QSettings::IniFormat));
 
-            file.write(QJsonDocument(defaultJson).toJson());
-            file.close();
-            qDebug() << "Created settings.json at:" << filePath;
-        } else {
-            qWarning() << "Failed to create file:" << filePath << "Error:" << file.errorString();
-        }
-    } else {
-        qDebug() << "Settings file already exists at:" << filePath;
+    // 初始化默认值
+    if (!settings->contains("shortcut")) {
+        settings->beginWriteArray("localPaths");
+        settings->endArray(); // 创建空路径数组
+        settings->setValue("shortcut", "");
+        settings->sync();
     }
 }
 
-
-
-
-
-
-void SettingsManager::saveSettings(const QStringList &paths, const QKeySequence &shortcut) {
-    QJsonObject json;
-    QJsonArray pathsArray;
-    for (const QString &path : paths) {
-        pathsArray.append(path);
+void SettingsManager::saveSettings(const QStringList &paths, const QKeySequence &shortcut)
+{
+    settings->beginWriteArray("localPaths");
+    for (int i = 0; i < paths.size(); ++i) {
+        settings->setArrayIndex(i);
+        settings->setValue("path", paths.at(i));
     }
-    json["localPaths"] = pathsArray;
-    json["shortcut"] = shortcut.toString();
+    settings->endArray();
 
-
-    QFile file(settingsFilePath);
-    if (file.open(QIODevice::WriteOnly)) {
-        file.write(QJsonDocument(json).toJson());
-        file.close();
-    } else {
-        qWarning() << "Failed to open settings file for writing:" << settingsFilePath;
-    }
+    settings->setValue("shortcut", shortcut.toString());
+    settings->sync();
 }
 
-void SettingsManager::loadSettings(QStringList &paths, QKeySequence &shortcut) {
-    QFile file(settingsFilePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Failed to open settings file for reading:" << settingsFilePath;
-        return;
-    }
-
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-    file.close();
-
-    if (!doc.isObject()) {
-        qWarning() << "Invalid JSON format in settings file.";
-         qWarning() << "Error: " << file.errorString();
-        return;
-    }
-
-    QJsonObject json = doc.object();
+void SettingsManager::loadSettings(QStringList &paths, QKeySequence &shortcut)
+{
     paths.clear();
-    if (json.contains("localPaths") && json["localPaths"].isArray()) {
-        QJsonArray pathsArray = json["localPaths"].toArray();
-        for (const QJsonValue &value : pathsArray) {
-            paths.append(value.toString());
-        }
+    int size = settings->beginReadArray("localPaths");
+    for (int i = 0; i < size; ++i) {
+        settings->setArrayIndex(i);
+        paths.append(settings->value("path").toString());
     }
+    settings->endArray();
 
-    if (json.contains("shortcut")) {
-        shortcut = QKeySequence(json["shortcut"].toString());
-    }
+    QString shortcutStr = settings->value("shortcut").toString();
+    shortcut = QKeySequence(shortcutStr);
 }
 
-void SettingsManager::loadSettings(QStringList &paths) {
+void SettingsManager::loadSettings(QStringList &paths)
+{
     QKeySequence dummy;
     loadSettings(paths, dummy);
 }
 
-void SettingsManager::loadSettings(QKeySequence &shortcut) {
+void SettingsManager::loadSettings(QKeySequence &shortcut)
+{
     QStringList dummy;
     loadSettings(dummy, shortcut);
 }

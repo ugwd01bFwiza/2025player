@@ -1,5 +1,6 @@
 #ifndef MainWindow_H
 #define MainWindow_H
+#include"settingpage.h"
 #include "navwidget.h"
 #include"musictable.h"
 #include<controlbar.h>
@@ -31,6 +32,8 @@ private:
     QMediaPlayer *player = new QMediaPlayer(this);
     QStackedWidget * page;
     MusicTable *music_table;
+    SettingPage *settingPage ;
+
     void LoadStyleSheet(QString url);
 
 public slots:
@@ -38,6 +41,8 @@ public slots:
     void currentchange(const QModelIndex &current,const QModelIndex &previous);
     protected:
     void resizeEvent(QResizeEvent *event) override;
+public emit:
+    void showSettingPage();
 };
 
 #endif // MAINWINDOW_H

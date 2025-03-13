@@ -37,6 +37,10 @@ MainWindow::MainWindow()
     bar->setSeparatorVisible(false);
     bar->setAutoHideOnFullscreen(true);
     bar->setSwitchThemeMenuVisible(true);
+    DIconButton* leftButton = new DIconButton(bar);
+    leftButton->setIcon(QIcon(":/asset/image/settings.PNG"));
+    leftButton->setFixedSize(36, 36);
+    bar->addWidget(leftButton,Qt::AlignRight);
     Navw->setAutoFillBackground(true);
     cbar->setAutoFillBackground(true);
 
@@ -44,13 +48,12 @@ MainWindow::MainWindow()
     //把主窗口分为上下两个垂直布局
 
     music_table = new MusicTable();
+    settingPage = new SettingPage();
      cbar->temp=music_table;
-    DPushButton *ts2=new DPushButton(this);
-    ts2->setText("视频");
 
     page = new QStackedWidget(this);
     page->addWidget(music_table);
-    page->addWidget(ts2);
+    page->addWidget(settingPage);
       RightHLayout->addWidget(page);
     cw->setLayout(MainVLayout);
     //cw->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
@@ -84,14 +87,19 @@ MainWindow::MainWindow()
     //对应左侧导航栏
     connect(Navw->ListView1->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::currentchange);
 
-
+    connect(leftButton, &DIconButton::clicked,this,&MainWindow::showSettingPage); 
+    
     Navw->ListView1->setCurrentIndex(Navw->ListView1->model()->index(0, 0));
 //    MainVLayout->setContentsMargins(0,0,0,0);
 
 //    DownHLayout->setContentsMargins(0,0,0,0);
 
 }
+///切换到设置页面
+void MainWindow::showSettingPage(){
+    page->setCurrentIndex(1);
 
+}
  ///深色浅色两套主题的颜色/图标设置
 void MainWindow::setTheme(DGuiApplicationHelper::ColorType theme)
 {
@@ -110,14 +118,10 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
 {
     int row=current.row();
 
-//    if(rowp!=-1){
-//        while (QLayoutItem *item = RightHLayout->takeAt(0)){
-//            QWidget *widget = item->widget();
-//                   if (widget) {
-//                       widget->deleteLater();
-//                   }
-//        }
-//    }
+
+    if(page->currentIndex()==1){
+        page->setCurrentIndex(0);
+    }
     if (row==0)
     {
         music_table->page->setCurrentIndex(0);

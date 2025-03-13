@@ -20,7 +20,6 @@ MusicPlayer::MusicPlayer()
 
     player=new QMediaPlayer;
     //QtConcurrent::run([this]() {  });
-    InitLocateMusic();
     readList(DataBase::Instance(),"locallist");
     connect(player, &QMediaPlayer::mediaStatusChanged, [this](QMediaPlayer::MediaStatus status) {
         if (status == QMediaPlayer::LoadedMedia) {
@@ -34,9 +33,7 @@ void MusicPlayer::play(QString url){
    }
 
 ///如果数据库没有的话，从本地读元信息传进数据库
-void MusicPlayer::InitLocateMusic() {
-    QString homePath = QDir::homePath();
-    QString mediaPath = homePath + "/Desktop/media/";  // 拼接桌面路径和 media 文件夹
+void MusicPlayer::initMusicByFilePath(QString mediaPath) {
 
 
     QDir localdir(mediaPath);
@@ -219,3 +216,22 @@ void MusicPlayer::loadLocalMusic(const QString &url,const QString &playListName)
     DataBase::Instance()->saveMetaData(metaDataMap,playListName,covpix,0);
 }
 
+void MusicPlayer::uninstallPath(DataBase *db, const QString &filePath,const QString &playListName) {
+    if (!QDir(filePath).exists()) {
+      qDebug() << "Error: Path does not exist";
+      return;
+    }
+  
+    // Create a file list
+    QDirIterator iterator(filePath, musicExtensions, QDir::Files);
+  
+    // Create a list of absolute file paths
+    QStringList filePaths;
+    while (iterator.hasNext()) {
+      filePaths.append(QDir(filePath).absoluteFilePath(iterator.next()));
+    }
+    if (!db->deleteByUrl(filePaths,playListName)){
+        qDebug() << "Error: Failed to delete from database";
+    }
+  
+  }

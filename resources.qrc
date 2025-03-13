@@ -21,5 +21,7 @@
         <file>asset/image/music2.PNG</file>
         <file>asset/image/queue.png</file>
         <file>asset/image/loop.png</file>
+        
+        <file>asset/image/settings.PNG</file>
     </qresource>
 </RCC>
