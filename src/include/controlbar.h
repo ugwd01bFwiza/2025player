@@ -63,6 +63,12 @@ public slots:
     void readVolume(const QString &filePath);
 
     void onLoopChange();
+    void handlePlay();
+    void handlePause();
+    void handleNext();
+    void handlePrevious();
+    void handleVolumeUp();
+    void handleVolumeDown();
 };
 
 #endif // CONTROLBAR_H

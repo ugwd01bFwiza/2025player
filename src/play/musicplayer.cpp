@@ -20,12 +20,13 @@ MusicPlayer::MusicPlayer()
 
     player=new QMediaPlayer;
     //QtConcurrent::run([this]() {  });
-    readList(DataBase::Instance(),"locallist");
+    readList(DataBase::instance(),"locallist");
     connect(player, &QMediaPlayer::mediaStatusChanged, [this](QMediaPlayer::MediaStatus status) {
         if (status == QMediaPlayer::LoadedMedia) {
             player->play();
         }
     });
+
 
 }
 void MusicPlayer::play(QString url){
@@ -33,7 +34,7 @@ void MusicPlayer::play(QString url){
    }
 
 ///如果数据库没有的话，从本地读元信息传进数据库
-void MusicPlayer::initMusicByFilePath(QString mediaPath) {
+void MusicPlayer::initMusicByFilePath(const QString &mediaPath) {
 
 
     QDir localdir(mediaPath);
@@ -47,7 +48,7 @@ void MusicPlayer::initMusicByFilePath(QString mediaPath) {
 
             // qDebug()<<fileInfo;
             QString filePath = fileInfo.absoluteFilePath();
-            if(isUrlInDatabase(DataBase::Instance(),filePath,"locallist")){
+            if(isUrlInDatabase(DataBase::instance(),filePath,"locallist")){
                 continue;
             }
 
@@ -60,7 +61,9 @@ void MusicPlayer::initMusicByFilePath(QString mediaPath) {
 
             }
         }
-    }
+
+
+       }
 }
 ///从数据库读元信息
 void MusicPlayer::readList(DataBase*db, const QString &playListName){
@@ -102,6 +105,7 @@ void MusicPlayer::readList(DataBase*db, const QString &playListName){
         MMetalist.append(MetaData(url,title,artist,album,duration.toInt(),poster));
 
     }
+
 
 
 
@@ -213,10 +217,10 @@ void MusicPlayer::loadLocalMusic(const QString &url,const QString &playListName)
     metaDataMap.insert("artist", artist);
     metaDataMap.insert("album", album);
     metaDataMap.insert("duration", QString::number(duration));
-    DataBase::Instance()->saveMetaData(metaDataMap,playListName,covpix,0);
+    DataBase::instance()->saveMetaData(metaDataMap,playListName,covpix,0);
 }
 
-void MusicPlayer::uninstallPath(DataBase *db, const QString &filePath,const QString &playListName) {
+void MusicPlayer::uninstallPath(const QString &filePath) {
     if (!QDir(filePath).exists()) {
       qDebug() << "Error: Path does not exist";
       return;
@@ -230,8 +234,26 @@ void MusicPlayer::uninstallPath(DataBase *db, const QString &filePath,const QStr
     while (iterator.hasNext()) {
       filePaths.append(QDir(filePath).absoluteFilePath(iterator.next()));
     }
-    if (!db->deleteByUrl(filePaths,playListName)){
+    if (!DataBase::instance()->deleteByUrl(filePaths,"locallist")){
         qDebug() << "Error: Failed to delete from database";
+    }
+    else{
+
+        //异步
+        //todo
+        MMetalist.clear();
+        qDebug()<<"delete MMetalist";
+
+        readList(DataBase::instance(),"locallist");
+        emit playListChanged();
     }
   
   }
+
+void MusicPlayer::installPath(const QString & filePath){
+
+      initMusicByFilePath(filePath);
+
+        readList(DataBase::instance(),"locallist");
+        emit playListChanged();
+     }

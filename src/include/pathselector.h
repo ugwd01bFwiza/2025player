@@ -39,7 +39,7 @@ void initUpdateMenu();
 
    const QString settingPath = QDir(QCoreApplication::applicationDirPath()).filePath("config.ini");
 
-    SettingsManager *settingManager;
+    // SettingsManager *settingManager; // 移除此行
 };
 
 #endif // PATHSELECTOR_H

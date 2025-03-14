@@ -6,6 +6,10 @@
         "qmessagebox": "cpp",
         "dscrollarea": "cpp",
         "new": "cpp",
-        "qscrollarea": "cpp"
+        "qscrollarea": "cpp",
+        "dapplication": "cpp",
+        "qkeysequence": "cpp",
+        "qaction": "cpp",
+        "qpushbutton": "cpp"
     }
 }

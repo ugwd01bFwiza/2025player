@@ -347,3 +347,30 @@ void ControlBar::switchvolume() {
     }
 
 }
+
+void ControlBar::handlePlay() {
+    auto player= mediaPlayer->player;
+    player->play();
+}
+
+void ControlBar::handlePause() {
+
+    auto player= mediaPlayer->player;
+    player->pause();
+}
+
+void ControlBar::handleNext() {
+    nexslot();
+}
+
+void ControlBar::handlePrevious() {
+    preslot();
+}
+
+void ControlBar::handleVolumeUp() {
+    volumeSlider->setValue(volumeSlider->value() + 5);
+}
+
+void ControlBar::handleVolumeDown() {
+    volumeSlider->setValue(volumeSlider->value() - 5);
+}

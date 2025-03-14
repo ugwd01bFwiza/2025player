@@ -29,6 +29,7 @@ MusicTable::MusicTable()
     //connect(selectDir,&DPushButton::clicked,this, &MusicTable::bt_selectDir);
     connect(searchEdit,&DLineEdit::textChanged, this, &MusicTable::onSearchTextChange);
 
+    connect(&MusicPlayer::instance(),&MusicPlayer::playListChanged,this,&MusicTable::resetMusicTable);
 }
 
 void MusicTable::initItem(){
@@ -70,10 +71,8 @@ void MusicTable::initItem(){
     music_table->verticalScrollBar()->setMaximumWidth(7);
     music_table->setResizeMode(QListView::Adjust);
     //    title_table->verticalHeader()->setObjectName("music_verticalHeader");
-    auto &musicplayer=MusicPlayer::instance();
-
-    for (auto& i : musicplayer.MMetalist)
-        Addmusic(i);
+    loadMusicTable();
+    
     video_table = new DListView(this);
     video_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -86,8 +85,30 @@ void MusicTable::initItem(){
     //           video_table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     //            video_table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     video_table->setSpacing(30);
-    QStandardItemModel *model = new QStandardItemModel(this);
-    QString homePath = QDir::homePath();
+videoListModel = new QStandardItemModel(this);
+    loadVideoTable(); 
+
+    video_table->setModel(videoListModel);
+
+    playAll = new DPushButton(this);
+    playAll->setText("播放全部");
+    playAll->setMaximumSize(100,40);
+    playAll->setMinimumSize(100,40);
+    playAll->setObjectName("playallBtn");
+    playAll->setIcon(QIcon(":/images/stackWidget/localMusic/btn_playall.png"));
+
+
+
+
+}
+void MusicTable::loadMusicTable(){
+
+    for(auto &i : MusicPlayer::instance().MMetalist){
+        Addmusic(i);
+    }
+}
+void MusicTable::loadVideoTable(){
+ QString homePath = QDir::homePath();
     QString mediaPath = homePath + "/Desktop/media/";  // 拼接桌面路径和 media 文件夹
 
     QDir dir(mediaPath);
@@ -113,8 +134,8 @@ void MusicTable::initItem(){
             QStandardItem *item = new QStandardItem(icon, fileInfo.fileName());
             //                   item->setSizeHint(QSize(160, 160)); // 设置图标大小
 
-            // 将 item 添加到 model 中
-            model->appendRow(item);
+            // 将 item 添加到 videoListModel 中
+            videoListModel->appendRow(item);
         }
     };
 
@@ -122,20 +143,13 @@ void MusicTable::initItem(){
     // 调用 Lambda 处理文件列表
     addVideoItems(fileList);
 
-    video_table->setModel(model);
-
-    playAll = new DPushButton(this);
-    playAll->setText("播放全部");
-    playAll->setMaximumSize(100,40);
-    playAll->setMinimumSize(100,40);
-    playAll->setObjectName("playallBtn");
-    playAll->setIcon(QIcon(":/images/stackWidget/localMusic/btn_playall.png"));
-
-
-
-
 }
-void MusicTable::AddVideo(int i){
+void MusicTable::clearMusicTable(){
+    music_table->clear();
+    listDlistView.clear();
+}
+void MusicTable::clearVideoTable(){
+    videoListModel->clear();
 }
 
 void MusicTable::localMusicLayout()
@@ -290,6 +304,7 @@ void MusicTable::Addmusic(const MetaData&music){
     item2->setEditable(false);
     item3->setEditable(false);
     view->addItem(rowNumber);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     model->appendRow(item0);
     model->appendRow(item11);
@@ -379,6 +394,7 @@ void MusicTable::setTheme(DGuiApplicationHelper::ColorType theme){
     //    }
 }
 void MusicTable::onResetWindowSize(int width){
+    windowsWidth=width;
     for(auto i : listDlistView){
         i->itemdelegate->factor=((width-900)*5/18);
         //qDebug()<<"factor:"<<i->itemdelegate->factor;
@@ -409,4 +425,14 @@ void MusicTable::onSearchTextChange(QString text){
         music_table->setRowHidden(i, !matchFound);
     }
 
+}
+void MusicTable::resetMusicTable(){
+    clearMusicTable();
+    loadMusicTable();
+    if (windowsWidth!=0)
+    onResetWindowSize(windowsWidth);
+}
+void MusicTable::resetVideoTable(){
+    clearVideoTable();
+    loadVideoTable();
 }

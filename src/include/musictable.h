@@ -37,16 +37,23 @@
      QStackedWidget *page;
      QList<CustomListView*> listDlistView;
      QFrame *qf;
+     QStandardItemModel*videoListModel;
+     int windowsWidth=0;
 
 
        void Addmusic(const MetaData& music);
-       void AddVideo(int i);
      void onResetWindowSize(int width);
   QString getUrlFromListView(int index);
 
   void playFromListView(int index);
  public slots:
          void setTheme(DGuiApplicationHelper::ColorType);
+         void clearMusicTable();
+         void loadMusicTable();
+         void clearVideoTable();
+         void loadVideoTable();
+         void resetMusicTable();
+         void resetVideoTable();
 
  private slots:
      void onBtPlayAll();

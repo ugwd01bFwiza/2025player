@@ -2,6 +2,15 @@
 #include <QFileInfo>
 #include <QDir>
 
+SettingsManager* SettingsManager::s_instance = nullptr;
+
+SettingsManager* SettingsManager::instance() {
+    if (!s_instance) {
+        s_instance = new SettingsManager("config.ini");
+    }
+    return s_instance;
+}
+
 SettingsManager::SettingsManager(const QString &filePath)
 {
     QFileInfo fileInfo(filePath);
@@ -21,41 +30,45 @@ SettingsManager::SettingsManager(const QString &filePath)
     }
 }
 
-void SettingsManager::saveSettings(const QStringList &paths, const QKeySequence &shortcut)
+void SettingsManager::saveSettings(const QString &tag, const QStringList &paths)
 {
-    settings->beginWriteArray("localPaths");
+    settings->beginWriteArray(tag);
     for (int i = 0; i < paths.size(); ++i) {
         settings->setArrayIndex(i);
-        settings->setValue("path", paths.at(i));
+        settings->setValue(tag, paths.at(i));
     }
     settings->endArray();
-
-    settings->setValue("shortcut", shortcut.toString());
     settings->sync();
 }
 
-void SettingsManager::loadSettings(QStringList &paths, QKeySequence &shortcut)
+void SettingsManager::loadSettings(const QString &tag, QStringList &paths)
 {
     paths.clear();
-    int size = settings->beginReadArray("localPaths");
+    int size = settings->beginReadArray(tag);
     for (int i = 0; i < size; ++i) {
         settings->setArrayIndex(i);
-        paths.append(settings->value("path").toString());
+        paths.append(settings->value(tag).toString());
     }
     settings->endArray();
-
-    QString shortcutStr = settings->value("shortcut").toString();
-    shortcut = QKeySequence(shortcutStr);
 }
 
-void SettingsManager::loadSettings(QStringList &paths)
-{
-    QKeySequence dummy;
-    loadSettings(paths, dummy);
+void SettingsManager::saveSettingsShortcutsMap(const QMap<QString, QKeySequence> &shortcuts)
+{    settings->beginGroup("Shortcuts");
+    for (auto it = shortcuts.begin(); it != shortcuts.end(); ++it) {
+        settings->setValue(it.key(), it.value().toString());
+    }
+    settings->endGroup();
+    settings->sync();
 }
 
-void SettingsManager::loadSettings(QKeySequence &shortcut)
+void SettingsManager::loadSettingsShortcutsMap(QMap<QString, QKeySequence> &shortcuts)
 {
-    QStringList dummy;
-    loadSettings(dummy, shortcut);
+    shortcuts.clear();
+    settings->beginGroup("Shortcuts");
+    QStringList keys = settings->childKeys();
+    for (const QString &key : keys) {
+        QString shortcutStr = settings->value(key).toString();
+        shortcuts[key] = QKeySequence(shortcutStr);
+    }
+    settings->endGroup();
 }

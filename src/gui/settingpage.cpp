@@ -13,6 +13,7 @@
 #include "settingpage.h"
 #include <QSettings>
 #include <QMessageBox>
+#include"shortcutmanager.h"
 SettingPage::SettingPage(QWidget *parent) : QFrame(parent) {
     setupUI();
     loadShortcuts();
@@ -24,7 +25,7 @@ SettingPage::~SettingPage() {
 void SettingPage::setupUI() {
     scrollArea = new DScrollArea(this);
     scrollArea->setFrameShape(QFrame::NoFrame);
-    scrollArea->setStyleSheet("QScrollArea { background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; }");
+    scrollArea->setStyleSheet("QScrollArea { background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 18px; }");
     scrollArea->setWidgetResizable(true);
     QWidget *scrollWidget = new QWidget(scrollArea);
     mainLayout = new QVBoxLayout(scrollWidget);
@@ -40,7 +41,7 @@ void SettingPage::setupUI() {
     shortcutsLayout->addLayout(leftColumn);
     shortcutsLayout->addLayout(rightColumn);
 
-    QStringList actions = {"上一曲", "下一曲", "播放", "暂停", "音量加", "音量减"};
+    
     for (int i = 0; i < actions.size(); ++i) {
         const QString &action = actions[i];
         QKeySequenceEdit *editor = new QKeySequenceEdit(this);
@@ -73,31 +74,55 @@ void SettingPage::setupUI() {
 }
 
 void SettingPage::loadShortcuts() {
-    QStringList paths;
-    QKeySequence shortcut;
-    SettingsManager settingsManager("settings.ini");
-    settingsManager.loadSettings(paths, shortcut);
+    QMap<QString, QKeySequence> shortcuts;
+    SettingsManager::instance()->loadSettingsShortcutsMap(shortcuts);
 
     for (const QString &action : shortcutEditors.keys()) {
-        shortcutEditors[action]->setKeySequence(shortcut);
+        if (shortcuts.contains(action)) {
+            shortcutEditors[action]->setKeySequence(shortcuts[action]);
+        }
     }
 }
 
 void SettingPage::saveShortcuts() {
-    QStringList paths;
-    QKeySequence shortcut;
+    QMap<QString, QKeySequence> shortcuts;
     
     for (const QString &action : shortcutEditors.keys()) {
-        shortcut = shortcutEditors[action]->keySequence();
-        paths.append(shortcut.toString());
+        QKeySequence sequence = shortcutEditors[action]->keySequence();
+        shortcuts[action] = sequence;
+        // 直接更新快捷键，无需重连
+        ShortcutManager::instance()->updateShortcut(action, sequence);
     }
 
-    SettingsManager settingsManager("settings.ini");
-    settingsManager.saveSettings(paths, shortcut);
-    QMessageBox::information(this, "保存成功", "快捷键已成功保存！");
+    SettingsManager::instance()->saveSettingsShortcutsMap(shortcuts);
+    QMessageBox::information(this, "保存成功", "快捷键已成功保存并生效！");
 }
 
+
 void SettingPage::resetDefaults() {
-    // Reset to default shortcuts logic
-    QMessageBox::information(this, "重置成功", "快捷键已重置为默认值。");
+    // 获取ShortcutManager实例并设置默认快捷键
+    ShortcutManager* manager = ShortcutManager::instance();
+    manager->setupDefaultShortcuts(); // 重置内存中的快捷键
+
+    // 构建默认快捷键映射（直接从ShortcutManager获取）
+    QMap<QString, QKeySequence> defaultShortcuts;
+    const QStringList actionNames = {"播放", "暂停", "下一曲", "上一曲", "音量加", "音量减"};
+    for (const QString &action : actionNames) {
+        if (manager->actions.contains(action)) {
+            defaultShortcuts[action] = manager->actions[action]->shortcut();
+        }
+    }
+
+    // 更新UI中的QKeySequenceEdit控件
+    for (const QString &action : shortcutEditors.keys()) {
+        if (defaultShortcuts.contains(action)) {
+            shortcutEditors[action]->setKeySequence(defaultShortcuts[action]);
+        }
+    }
+
+    // 保存默认值到配置文件
+    SettingsManager::instance()->saveSettingsShortcutsMap(defaultShortcuts);
+    DMessageManager::instance()->sendMessage(this, style()->standardIcon(QStyle::SP_MessageBoxWarning),
+    "重置成功" );
+    
 }

@@ -3,13 +3,13 @@
 #include<QBuffer>
 #include<QDebug>
 
-DataBase* DataBase::instance = nullptr;
-DataBase* DataBase::Instance()
+DataBase* DataBase::s_instance = nullptr;
+DataBase* DataBase::instance()
 {
-    if (instance == nullptr) {
-        instance = new DataBase();  // 创建唯一的实例
+    if (s_instance == nullptr) {
+        s_instance = new DataBase();  // 创建唯一的实例
     }
-    return instance;
+    return s_instance;
 }
 DataBase::DataBase()
 {
@@ -184,19 +184,18 @@ DataBase::DataBase()
      return urlList;
  }
 
- bool DataBase::deleteByUrl(const QStringList &url,const QString&playListName){
+bool DataBase::deleteByUrl(const QStringList &url, const QString &playListName) {
+    QSqlQuery sql_query(db);
+    QString sqlStatement;
 
-   QSqlQuery sql_query(db);
-   QString sqlStatement;
-   QStringList urlList = getUrlFromPlayList("url");
-   for(QString itUrl : urlList) {
-         sqlStatement = QString("delete from %1 where url = :url").arg(playListName);
-         sql_query.prepare(sqlStatement);
-         sql_query.bindValue(":url",itUrl);
-         if (!sql_query.exec()) {
-             qDebug() << "删除歌曲元数据失败：" << playListName << sql_query.lastError();
-             return false;
-         }
-   }
-   return true;
- }
+    for(const QString &itUrl : url) {
+        sqlStatement = QString("delete from %1 where url = :url").arg(playListName);
+        sql_query.prepare(sqlStatement);
+        sql_query.bindValue(":url", itUrl);
+        if (!sql_query.exec()) {
+            qDebug() << "删除歌曲元数据失败：" << playListName << sql_query.lastError();
+            return false;
+        }
+    }
+    return true;
+}

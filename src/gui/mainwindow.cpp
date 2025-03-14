@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include"shortcutmanager.h"
 #include<QVBoxLayout>
 #include<QHBoxLayout>
 #include<DPushButton>
@@ -12,7 +13,7 @@
 MainWindow::~MainWindow() {
 
     delete &MusicPlayer::instance();
-    delete DataBase::Instance();
+    delete DataBase::instance();
 
 }
 MainWindow::MainWindow()
@@ -94,6 +95,20 @@ MainWindow::MainWindow()
 
 //    DownHLayout->setContentsMargins(0,0,0,0);
 
+    // 在构造函数末尾添加快捷键连接
+    connect(ShortcutManager::instance(), &ShortcutManager::playTriggered,
+            cbar, &ControlBar::handlePlay);
+    connect(ShortcutManager::instance(), &ShortcutManager::pauseTriggered,
+            cbar, &ControlBar::handlePause);
+    connect(ShortcutManager::instance(), &ShortcutManager::nextTriggered,
+            cbar, &ControlBar::handleNext);
+    connect(ShortcutManager::instance(), &ShortcutManager::previousTriggered,
+            cbar, &ControlBar::handlePrevious);
+    connect(ShortcutManager::instance(), &ShortcutManager::volumeUpTriggered,
+            cbar, &ControlBar::handleVolumeUp);
+    connect(ShortcutManager::instance(), &ShortcutManager::volumeDownTriggered,
+            cbar, &ControlBar::handleVolumeDown);
+    ShortcutManager::instance()->bindActionsTo(this);
 }
 ///切换到设置页面
 void MainWindow::showSettingPage(){
@@ -158,3 +173,23 @@ void MainWindow::LoadStyleSheet( QString url)
         file.close();
     }
 }
+
+// void MainWindow::setupConnections() {
+//     // ...existing code...
+    
+//     // 连接快捷键信号到控制栏槽函数
+//     connect(ShortcutManager::instance(), &ShortcutManager::playTriggered,
+//             cbar, &ControlBar::handlePlay);
+//     connect(ShortcutManager::instance(), &ShortcutManager::pauseTriggered,
+//             cbar, &ControlBar::handlePause);
+//     connect(ShortcutManager::instance(), &ShortcutManager::nextTriggered,
+//             cbar, &ControlBar::handleNext);
+//     connect(ShortcutManager::instance(), &ShortcutManager::previousTriggered,
+//             cbar, &ControlBar::handlePrevious);
+//     connect(ShortcutManager::instance(), &ShortcutManager::volumeUpTriggered,
+//             cbar, &ControlBar::handleVolumeUp);
+//     connect(ShortcutManager::instance(), &ShortcutManager::volumeDownTriggered,
+//             cbar, &ControlBar::handleVolumeDown);
+    
+//     // ...existing code...
+// }

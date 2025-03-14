@@ -17,8 +17,9 @@ PathSelector::PathSelector(QWidget *parent)
     mainLayout->setContentsMargins(8, 8, 8, 8);
     mainLayout->setSpacing(8);
 
-    settingManager = new SettingsManager(settingPath);
-    settingManager->loadSettings(paths);
+     
+    SettingsManager::instance()->loadSettings("localPaths",paths);
+     
     // 创建按钮和菜单
     menu = new DMenu(this);
     pathButton = new DPushButton("选择路径 ▾", this);
@@ -27,6 +28,10 @@ PathSelector::PathSelector(QWidget *parent)
 
     // 每次点击按钮前刷新菜单
     connect(pathButton, &DPushButton::clicked, this, &PathSelector::updateMenu);
+    connect(this, &PathSelector::pathSelected, 
+        &MusicPlayer::instance(), &MusicPlayer::initMusicByFilePath);
+    connect(this,&PathSelector::pathDeleted,
+        &MusicPlayer::instance(), &MusicPlayer::uninstallPath); 
 
     initUpdateMenu();
 }
@@ -38,7 +43,7 @@ void PathSelector::initUpdateMenu()
 
     // 遍历每个路径，创建自定义菜单项a
     for (const QString &path : paths) {
-        MusicPlayer::instance().initMusicByFilePath(path);
+        //MusicPlayer::instance().initMusicByFilePath(path);
         // 自定义 widget，内含路径标签和删除按钮
         QWidget *itemWidget = new QWidget;
         QHBoxLayout *itemLayout = new QHBoxLayout(itemWidget);
@@ -84,8 +89,7 @@ void PathSelector::initUpdateMenu()
     menu->addAction(addAction);
 
     connect(addBtn, &QPushButton::clicked, this, &PathSelector::addNewPath);
-       settingManager->saveSettings(paths, QKeySequence());  // 保存路径，快捷键空着
-
+    SettingsManager::instance()->saveSettings("localPaths",paths); 
 }
 void PathSelector::updateMenu()
 {
@@ -139,8 +143,7 @@ void PathSelector::updateMenu()
     menu->addAction(addAction);
 
     connect(addBtn, &QPushButton::clicked, this, &PathSelector::addNewPath);
-       settingManager->saveSettings(paths, QKeySequence());  // 保存路径，快捷键空着
-
+       SettingsManager::instance()->saveSettings("localPaths",paths); 
 }
 
 void PathSelector::addNewPath()
@@ -151,7 +154,6 @@ void PathSelector::addNewPath()
         updateMenu();
         emit pathSelected(dir);
 
-    MusicPlayer::instance().initMusicByFilePath(dir);
     }
 
 }
@@ -163,6 +165,5 @@ void PathSelector::removePath(const QString &path)
         updateMenu();
         emit pathDeleted(path);
 
-    MusicPlayer::instance().initMusicByFilePath(path);
     }
 }

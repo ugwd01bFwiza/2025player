@@ -16,7 +16,7 @@ class DataBase : public QObject
 
     Q_OBJECT
 public:
-        static DataBase* Instance();
+        static DataBase* instance();
 
 
         DataBase(const DataBase&) = delete;
@@ -38,7 +38,7 @@ public:
     QStringList getUrlFromPlayList(const QString &playListName);
 private:
     DataBase();
-     static DataBase* instance;
+     static DataBase* s_instance;
 };
 
 #endif // DATABASE_H
