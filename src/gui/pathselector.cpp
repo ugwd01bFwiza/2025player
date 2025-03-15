@@ -18,7 +18,6 @@ PathSelector::PathSelector(QWidget *parent)
     mainLayout->setSpacing(8);
 
      
-    SettingsManager::instance()->loadSettings("localPaths",paths);
      
     // 创建按钮和菜单
     menu = new DMenu(this);
@@ -29,7 +28,7 @@ PathSelector::PathSelector(QWidget *parent)
     // 每次点击按钮前刷新菜单
     connect(pathButton, &DPushButton::clicked, this, &PathSelector::updateMenu);
     connect(this, &PathSelector::pathSelected, 
-        &MusicPlayer::instance(), &MusicPlayer::initMusicByFilePath);
+        &MusicPlayer::instance(), &MusicPlayer::installPath);
     connect(this,&PathSelector::pathDeleted,
         &MusicPlayer::instance(), &MusicPlayer::uninstallPath); 
 
@@ -42,7 +41,7 @@ void PathSelector::initUpdateMenu()
     menu->clear();
 
     // 遍历每个路径，创建自定义菜单项a
-    for (const QString &path : paths) {
+    for (const QString &path :SettingsManager::instance()->paths) {
         //MusicPlayer::instance().initMusicByFilePath(path);
         // 自定义 widget，内含路径标签和删除按钮
         QWidget *itemWidget = new QWidget;
@@ -89,7 +88,7 @@ void PathSelector::initUpdateMenu()
     menu->addAction(addAction);
 
     connect(addBtn, &QPushButton::clicked, this, &PathSelector::addNewPath);
-    SettingsManager::instance()->saveSettings("localPaths",paths); 
+
 }
 void PathSelector::updateMenu()
 {
@@ -97,7 +96,7 @@ void PathSelector::updateMenu()
     menu->clear();
 
     // 遍历每个路径，创建自定义菜单项a
-    for (const QString &path : paths) {
+    for (const QString &path : SettingsManager::instance()->paths) {
         // 自定义 widget，内含路径标签和删除按钮
         QWidget *itemWidget = new QWidget;
         QHBoxLayout *itemLayout = new QHBoxLayout(itemWidget);
@@ -143,15 +142,17 @@ void PathSelector::updateMenu()
     menu->addAction(addAction);
 
     connect(addBtn, &QPushButton::clicked, this, &PathSelector::addNewPath);
-       SettingsManager::instance()->saveSettings("localPaths",paths); 
 }
 
 void PathSelector::addNewPath()
 {
     QString dir = DFileDialog::getExistingDirectory(this, "选择路径");
-    if (!dir.isEmpty() && !paths.contains(dir)) {
-        paths.append(dir);
+    if (!dir.isEmpty() && !SettingsManager::instance()->paths.contains(dir)) {
+
+        SettingsManager::instance()->addNewPath(dir);
+        
         updateMenu();
+        
         emit pathSelected(dir);
 
     }
@@ -160,8 +161,8 @@ void PathSelector::addNewPath()
 
 void PathSelector::removePath(const QString &path)
 {
-    if (paths.contains(path)) {
-        paths.removeAll(path);
+    if (SettingsManager::instance()->paths.contains(path)) {
+        SettingsManager::instance()->deletePath(path);
         updateMenu();
         emit pathDeleted(path);
 

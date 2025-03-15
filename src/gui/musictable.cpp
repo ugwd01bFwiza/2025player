@@ -1,6 +1,7 @@
 #include<QFileIconProvider>
 #include"pathselector.h"
 #include "musictable.h"
+#include"settingsmanager.h"
 #include<QVBoxLayout>
 #include<DTableWidget>
 #include <QHeaderView>
@@ -30,6 +31,7 @@ MusicTable::MusicTable()
     connect(searchEdit,&DLineEdit::textChanged, this, &MusicTable::onSearchTextChange);
 
     connect(&MusicPlayer::instance(),&MusicPlayer::playListChanged,this,&MusicTable::resetMusicTable);
+    connect(SettingsManager::instance(),&SettingsManager::pathChange,this,&MusicTable::resetVideoTable);
 }
 
 void MusicTable::initItem(){
@@ -82,7 +84,7 @@ void MusicTable::initItem(){
     video_table->   setSpacing(10);
     video_table->  setResizeMode(QListView::Adjust);
     video_table->  setMovement(QListView::Static);
-    //           video_table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+               video_table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     //            video_table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     video_table->setSpacing(30);
 videoListModel = new QStandardItemModel(this);
@@ -108,41 +110,34 @@ void MusicTable::loadMusicTable(){
     }
 }
 void MusicTable::loadVideoTable(){
- QString homePath = QDir::homePath();
-    QString mediaPath = homePath + "/Desktop/media/";  // 拼接桌面路径和 media 文件夹
-
-    QDir dir(mediaPath);
-    if (!dir.exists()) return;
-
-    // 只匹配常见视频格式
-    QStringList filters = {"*.mp4", "*.avi", "*.mkv", "*.mov", "*.flv", "*.wmv"};
-    QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files);
-
-    // 使用 Lambda 读取文件并添加到 video_table
+     // 使用 Lambda 读取文件并添加到 video_table
     auto addVideoItems = [&](QFileInfoList files) {
         for (const QFileInfo &fileInfo : files) {
             // 获取文件图标
             QFileIconProvider iconProvider;
             QIcon icon = iconProvider.icon(fileInfo); // 获取文件图标
 
-            // 检查是否获取到图标，如果没有则使用默认图标
             if (icon.isNull()) {
                 icon = QIcon(":/asset/image/video2.PNG");  // 使用默认图标路径
             }
 
-            // 创建 QStandardItem 并设置图标和名称
+           
             QStandardItem *item = new QStandardItem(icon, fileInfo.fileName());
-            //                   item->setSizeHint(QSize(160, 160)); // 设置图标大小
-
-            // 将 item 添加到 videoListModel 中
+                    
             videoListModel->appendRow(item);
         }
     };
 
+    
+for(const QString & mediaPath : SettingsManager::instance()->paths){
+    QDir dir(mediaPath);
+    if (!dir.exists()) return;
 
-    // 调用 Lambda 处理文件列表
+   
+    QStringList filters = {"*.mp4", "*.avi", "*.mkv", "*.mov", "*.flv", "*.wmv"};
+    QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files);
     addVideoItems(fileList);
-
+}
 }
 void MusicTable::clearMusicTable(){
     music_table->clear();

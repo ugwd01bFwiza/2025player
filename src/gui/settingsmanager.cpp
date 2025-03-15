@@ -28,6 +28,16 @@ SettingsManager::SettingsManager(const QString &filePath)
         settings->setValue("shortcut", "");
         settings->sync();
     }
+   //每次更新完都要更新paths数组
+    loadSettings("localPaths",paths);
+}
+
+void SettingsManager::deleteSettings(const QString &tag,const QString &key)
+{
+    settings->beginGroup(tag);
+    settings->remove(key);
+    settings->endGroup();
+    settings->sync();
 }
 
 void SettingsManager::saveSettings(const QString &tag, const QStringList &paths)
@@ -40,6 +50,8 @@ void SettingsManager::saveSettings(const QString &tag, const QStringList &paths)
     settings->endArray();
     settings->sync();
 }
+
+
 
 void SettingsManager::loadSettings(const QString &tag, QStringList &paths)
 {
@@ -71,4 +83,19 @@ void SettingsManager::loadSettingsShortcutsMap(QMap<QString, QKeySequence> &shor
         shortcuts[key] = QKeySequence(shortcutStr);
     }
     settings->endGroup();
+}
+
+void SettingsManager::addNewPath(const QString &path)
+{
+    paths.append(path);
+    saveSettings("localPaths", paths);
+    emit pathChange();
+}
+
+void SettingsManager::deletePath(const QString &path)
+{
+    paths.removeOne(path);
+
+    deleteSettings("locallist",path);
+    emit pathChange();
 }

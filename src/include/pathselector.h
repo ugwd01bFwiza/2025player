@@ -34,7 +34,6 @@ private slots:
 private:
     DPushButton *pathButton; // 下拉菜单按钮
     DMenu *menu;             // 下拉菜单
-    QStringList paths;    // 存储路径列表
 void initUpdateMenu();
 
    const QString settingPath = QDir(QCoreApplication::applicationDirPath()).filePath("config.ini");
