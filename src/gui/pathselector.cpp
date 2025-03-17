@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <DFileDialog>
+#include<QtConcurrent>
 
 PathSelector::PathSelector(QWidget *parent)
     : QWidget(parent)
@@ -145,28 +146,34 @@ void PathSelector::updateMenu()
 
     connect(addBtn, &QPushButton::clicked, this, &PathSelector::addNewPath);
 }
-
+//更新路径和视图，发送pathSelected信号触发musicplayer的 installPath
 void PathSelector::addNewPath()
 {
     QString dir = DFileDialog::getExistingDirectory(this, "选择路径");
     if (!dir.isEmpty() && !SettingsManager::instance()->paths.contains(dir)) {
-
-        SettingsManager::instance()->addNewPath(dir);
-        
-        updateMenu();
-        
-        emit pathSelected(dir);
-
+        QtConcurrent::run([=]() {
+            SettingsManager::instance()->addNewPath(dir);
+            
+            // UI updates must be done in main thread
+            QMetaObject::invokeMethod(this, [=]() {
+                updateMenu();
+                emit pathSelected(dir);
+            }, Qt::QueuedConnection);
+        });
     }
-
 }
 
 void PathSelector::removePath(const QString &path)
 {
     if (SettingsManager::instance()->paths.contains(path)) {
-        SettingsManager::instance()->deletePath(path);
-        updateMenu();
-        emit pathDeleted(path);
-
+        QtConcurrent::run([=]() {
+            SettingsManager::instance()->deletePath(path);
+            
+            // UI updates must be done in main thread
+            QMetaObject::invokeMethod(this, [=]() {
+                updateMenu();
+                emit pathDeleted(path);
+            }, Qt::QueuedConnection);
+        });
     }
 }

@@ -469,12 +469,14 @@ void MusicTable::onSearchTextChange(QString text)
     }
 }
 void MusicTable::resetMusicTable()
-{
-    clearMusicTable();
-    loadMusicTable();
-    if (windowsWidth != 0)
-        onResetWindowSize(windowsWidth);
-}
+{        clearMusicTable();
+        loadMusicTable();
+        if (windowsWidth != 0) {
+            QMetaObject::invokeMethod(this, [this]() {
+                onResetWindowSize(windowsWidth);
+            }, Qt::QueuedConnection);
+        }
+  }
 void MusicTable::resetVideoTable()
 {
     clearVideoTable();

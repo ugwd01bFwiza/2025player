@@ -233,36 +233,40 @@ void MusicPlayer::uninstallPath(const QString &filePath) {
         return;
     }
 
-    // Create a file list
-    QDirIterator iterator(filePath, musicExtensions, QDir::Files);
+    QtConcurrent::run([this, filePath]() {
+        // Create a file list
+        QDirIterator iterator(filePath, musicExtensions, QDir::Files);
 
-    // Create a list of absolute file paths
-    QStringList filePaths;
-    while (iterator.hasNext()) {
-        filePaths.append(QDir(filePath).absoluteFilePath(iterator.next()));
-    }
-    if (!DataBase::instance()->deleteByUrl(filePaths,locallist)){
-        qDebug() << "Error: Failed to delete from database";
-    }
-    else{
+        // Create a list of absolute file paths
+        QStringList filePaths;
+        while (iterator.hasNext()) {
+            filePaths.append(QDir(filePath).absoluteFilePath(iterator.next()));
+        }
+        
+        if (!DataBase::instance()->deleteByUrl(filePaths,locallist)) {
+            qDebug() << "Error: Failed to delete from database";
+        }
+        else {
+            MMetalist.clear();
+            qDebug() << "delete MMetalist";
 
-        //异步
-        //todo
-        MMetalist.clear();
-        qDebug()<<"delete MMetalist";
-
-        readMusicList(locallist);
-        emit mediaListChanged();
-    }
-
+            readMusicList(locallist);
+            QMetaObject::invokeMethod(this, [this]() {
+                emit mediaListChanged();
+            }, Qt::QueuedConnection);
+        }
+    });
 }
 
 void MusicPlayer::installPath(const QString & filePath){
 
-    initMusicByFilePath(filePath);
-
-    readMusicList(locallist);
-    emit mediaListChanged();
+    QtConcurrent::run([this, filePath]() {
+        initMusicByFilePath(filePath);
+        readMusicList(locallist);
+        QMetaObject::invokeMethod(this, [this]() {
+            emit mediaListChanged();
+        }, Qt::QueuedConnection);
+    });
 }
 void MusicPlayer::pause(){
     player->pause();
