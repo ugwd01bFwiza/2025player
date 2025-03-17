@@ -37,6 +37,7 @@ void SettingsManager::deleteSettings(const QString &tag,const QString &key)
     settings->beginGroup(tag);
     settings->remove(key);
     settings->endGroup();
+
     settings->sync();
 }
 

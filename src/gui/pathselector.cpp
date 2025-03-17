@@ -33,6 +33,7 @@ PathSelector::PathSelector(QWidget *parent)
         &MusicPlayer::instance(), &MusicPlayer::uninstallPath); 
 
     initUpdateMenu();
+
 }
 ///第一次，播放器读取音乐就是从这里开始的
 void PathSelector::initUpdateMenu()
@@ -42,8 +43,8 @@ void PathSelector::initUpdateMenu()
 
     // 遍历每个路径，创建自定义菜单项a
     for (const QString &path :SettingsManager::instance()->paths) {
-        //MusicPlayer::instance().initMusicByFilePath(path);
-        // 自定义 widget，内含路径标签和删除按钮
+       //以这种方式加载路径
+        MusicPlayer::instance().initMusicByFilePath(path);
         QWidget *itemWidget = new QWidget;
         QHBoxLayout *itemLayout = new QHBoxLayout(itemWidget);
         itemLayout->setContentsMargins(8, 4, 8, 4);
@@ -74,6 +75,7 @@ void PathSelector::initUpdateMenu()
         });
     }
 
+    MusicPlayer::instance().readMusicList("locallist");
     // 分隔线
     menu->addSeparator();
 

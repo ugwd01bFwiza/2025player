@@ -30,6 +30,7 @@ NavWidget::NavWidget()
 
     AddItems( QIcon(":asset/image/music2.png"),"Local Music");
     AddItems(QIcon(":asset/image/video2.png"),"Video");
+    AddItems(QIcon(":asset/image/video2.png"),"Play History");
    // ListView1->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     ListView1->setModel(model);
 

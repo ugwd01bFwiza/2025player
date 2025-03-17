@@ -64,7 +64,7 @@ public slots:
 
     void onLoopChange();
     void handlePlay();
-    void handlePause();
+    void handleChangeLoop();
     void handleNext();
     void handlePrevious();
     void handleVolumeUp();

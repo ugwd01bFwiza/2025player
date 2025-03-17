@@ -41,6 +41,8 @@ public slots:
     void currentchange(const QModelIndex &current,const QModelIndex &previous);
     protected:
     void resizeEvent(QResizeEvent *event) override;
+    /// 程序退出时调用
+    void onAppAboutToQuit();
     // void setupConnections() ;
 public emit:
     void showSettingPage();

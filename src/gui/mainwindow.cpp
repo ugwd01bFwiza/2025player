@@ -94,12 +94,12 @@ MainWindow::MainWindow()
 //    MainVLayout->setContentsMargins(0,0,0,0);
 
 //    DownHLayout->setContentsMargins(0,0,0,0);
-
+connect(qApp, &QCoreApplication::aboutToQuit, this,&MainWindow::onAppAboutToQuit);
     // 在构造函数末尾添加快捷键连接
     connect(ShortcutManager::instance(), &ShortcutManager::playTriggered,
             cbar, &ControlBar::handlePlay);
     connect(ShortcutManager::instance(), &ShortcutManager::pauseTriggered,
-            cbar, &ControlBar::handlePause);
+            cbar, &ControlBar::handleChangeLoop);
     connect(ShortcutManager::instance(), &ShortcutManager::nextTriggered,
             cbar, &ControlBar::handleNext);
     connect(ShortcutManager::instance(), &ShortcutManager::previousTriggered,
@@ -150,6 +150,9 @@ void MainWindow::currentchange(const QModelIndex &current,const QModelIndex &pre
 
         music_table->page->setCurrentIndex(1);
     }
+    else if (row==2){
+        music_table->page->setCurrentIndex(2);
+    }
 
 }
 
@@ -174,22 +177,6 @@ void MainWindow::LoadStyleSheet( QString url)
     }
 }
 
-// void MainWindow::setupConnections() {
-//     // ...existing code...
+void MainWindow::onAppAboutToQuit() {
     
-//     // 连接快捷键信号到控制栏槽函数
-//     connect(ShortcutManager::instance(), &ShortcutManager::playTriggered,
-//             cbar, &ControlBar::handlePlay);
-//     connect(ShortcutManager::instance(), &ShortcutManager::pauseTriggered,
-//             cbar, &ControlBar::handlePause);
-//     connect(ShortcutManager::instance(), &ShortcutManager::nextTriggered,
-//             cbar, &ControlBar::handleNext);
-//     connect(ShortcutManager::instance(), &ShortcutManager::previousTriggered,
-//             cbar, &ControlBar::handlePrevious);
-//     connect(ShortcutManager::instance(), &ShortcutManager::volumeUpTriggered,
-//             cbar, &ControlBar::handleVolumeUp);
-//     connect(ShortcutManager::instance(), &ShortcutManager::volumeDownTriggered,
-//             cbar, &ControlBar::handleVolumeDown);
-    
-//     // ...existing code...
-// }
+}

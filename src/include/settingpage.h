@@ -38,7 +38,7 @@ private:
     QPushButton *saveButton;
     QPushButton *resetButton;
     DScrollArea *scrollArea;
-    const QStringList actions = {"上一曲", "下一曲", "播放", "暂停", "音量加", "音量减"};
+    const QStringList actions = {"上一曲", "下一曲", "播放/暂停", "切换循环模式", "音量加", "音量减"};
 };
 
 

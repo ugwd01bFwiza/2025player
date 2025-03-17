@@ -10,6 +10,7 @@
         "dapplication": "cpp",
         "qkeysequence": "cpp",
         "qaction": "cpp",
-        "qpushbutton": "cpp"
+        "qpushbutton": "cpp",
+        "chrono": "cpp"
     }
 }

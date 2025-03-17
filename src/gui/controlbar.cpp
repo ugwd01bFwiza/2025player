@@ -114,8 +114,8 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
     connect(btpre,&DIconButton::clicked,this, &ControlBar::preslot);
     connect(btstop,&DIconButton::clicked,this, &ControlBar::stopslot);
     connect(btnex,&DIconButton::clicked,this, &ControlBar::nexslot);
-    connect(MusicPlayer::instance().player,&QMediaPlayer::stateChanged,this,&ControlBar::stchange);
-    connect(MusicPlayer::instance().player,&QMediaPlayer::mediaStatusChanged,this,&ControlBar::mediachange);
+    connect(&MusicPlayer::instance(),&MusicPlayer::stateChanged,this,&ControlBar::stchange);
+    connect(&MusicPlayer::instance(),&MusicPlayer::mediaStatusChanged,this,&ControlBar::mediachange);
     connect(cTimer, &QTimer::timeout, this, &ControlBar::handleTimeout);
     connect(processSlider,&DSlider::valueChanged,this,&ControlBar::sliderchange);
     connect(processSlider,&DSlider::sliderReleased ,this,&ControlBar::processsetting);
@@ -130,7 +130,7 @@ ControlBar::ControlBar(QWidget *parent) : QFrame(parent)
 ///读取设置之前的音量设置(todo
 void ControlBar::readVolume(const QString &filePath){
     volumeSlider->setValue(preVolume);
-    mediaPlayer->player->setVolume(preVolume);
+    mediaPlayer->setVolume(preVolume);
 }
 void ControlBar::LoadStyleSheet()
 {
@@ -199,7 +199,7 @@ void ControlBar::stchange(QMediaPlayer::State state){
     }
 }
 void ControlBar::playslot(){
-    auto player= mediaPlayer->player;
+    auto player= mediaPlayer;
     if(player->state()==QMediaPlayer::PlayingState){
 
         player->pause();
@@ -216,7 +216,7 @@ void ControlBar::preslot(){
 }
 }
 void ControlBar::stopslot(){
-     mediaPlayer->player->stop();
+     mediaPlayer->stop();
 
 
 }
@@ -295,11 +295,14 @@ void ControlBar::PlaySliderValueReset(){
 
 }
 void ControlBar::mediachange(QMediaPlayer::MediaStatus state){
+    ///换媒体文件
     if (state==QMediaPlayer::MediaStatus::LoadedMedia)
       {
         PlaySliderValueReset();
-        endtime->setText(QString(formatTime(mediaPlayer->player->duration()/1000+1)));
-    processSlider->setMaximum(mediaPlayer->player->duration()/1000+1);
+        endtime->setText(QString(formatTime(mediaPlayer->duration()/1000+1)));
+    processSlider->setMaximum(mediaPlayer->duration()/1000+1);
+
+
     }
     else if(state==QMediaPlayer::MediaStatus::EndOfMedia)
     {
@@ -329,10 +332,10 @@ void ControlBar::sliderchange(int value){
     playtime ->setText(formatTime(currenttime));
 }
 void ControlBar::volumesetting(int value){
-    mediaPlayer->player->setVolume(value);
+    mediaPlayer->setVolume(value);
 }
 void ControlBar::processsetting(){
-    mediaPlayer->player->setPosition(processSlider->value()*1000);
+    mediaPlayer->setPosition(processSlider->value()*1000);
 }
 void ControlBar::switchvolume() {
     if(volumeSlider->value()){
@@ -349,14 +352,11 @@ void ControlBar::switchvolume() {
 }
 
 void ControlBar::handlePlay() {
-    auto player= mediaPlayer->player;
-    player->play();
+   playslot(); 
 }
 
-void ControlBar::handlePause() {
-
-    auto player= mediaPlayer->player;
-    player->pause();
+void ControlBar::handleChangeLoop() {
+   onLoopChange(); 
 }
 
 void ControlBar::handleNext() {

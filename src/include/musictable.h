@@ -19,8 +19,7 @@
 #include<DLineEdit>
 #include<QStackedWidget>
  DWIDGET_USE_NAMESPACE
- class CustomListView;  // 前向声明 CustomListView
-
+ class CustomListView;  
  class MusicTable : public QFrame {
      Q_OBJECT
  public:
@@ -28,6 +27,9 @@
 
      DListWidget *music_table;
      DListView *video_table;
+
+
+     DListView *historyTable;
      DPushButton *playAll;
      DLineEdit *searchEdit ;
 //     DLabel *displayLabel[2];
@@ -38,13 +40,14 @@
      QList<CustomListView*> listDlistView;
      QFrame *qf;
      QStandardItemModel*videoListModel;
+     QStandardItemModel*historyListModel;
      int windowsWidth=0;
 
 
-       void Addmusic(const MetaData& music);
+       void addmusic(const MetaData& music);
      void onResetWindowSize(int width);
   QString getUrlFromListView(int index);
-
+///Controlbar的上一曲下一曲会经过这里
   void playFromListView(int index);
  public slots:
          void setTheme(DGuiApplicationHelper::ColorType);
@@ -52,8 +55,12 @@
          void loadMusicTable();
          void clearVideoTable();
          void loadVideoTable();
+         void loadHistoryTable();
          void resetMusicTable();
          void resetVideoTable();
+
+         void onHistoryListRemove(int index);
+       void addHistoryItem(const HistoryMData& item);
 
  private slots:
      void onBtPlayAll();
@@ -61,10 +68,13 @@
      void onSearchTextChange(QString text);
 
  private:
+
+  const int MAX_HISTORY = 100; // 限制历史记录数量
      void LoadStyleSheet();
      void localMusicLayout();
      void initLayout();
      void initItem();
+     void initSource();
 
     signals:
      void temp(int index);
@@ -99,5 +109,15 @@ public:
 
     void play();
 };
+class HistoryTable : public DListView {
+    Q_OBJECT
+public:
+    QString url;
+    MusicTable *tableWidget;
+    
+    int number;
+    void mouseDoubleClickEvent(QMouseEvent *event);
 
+    void play();
+};
 #endif // MEDIATABLE_H
