@@ -14,10 +14,10 @@ public:
     AVFrameQueue();
     ~AVFrameQueue();
     void Abort();
+    int Size();
     int Push(AVFrame *frame);
     AVFrame *Pop(const int timeout);
     AVFrame *Front();
-
 
 private:
     void release();

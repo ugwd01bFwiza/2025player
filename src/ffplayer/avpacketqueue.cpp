@@ -7,19 +7,8 @@ AVPacketQueue::~AVPacketQueue() {
 }
 
 void AVPacketQueue::Abort() {
+    release();
     queue_.Abort();
-}
-
-void AVPacketQueue::Release() {
-    while (true) {
-        AVPacket *pkt = nullptr;
-        int ret = queue_.Pop(pkt, 1);
-        if (ret >= 0) {
-            av_packet_free(&pkt);
-            continue;
-        }
-        else break;
-    }
 }
 
 int AVPacketQueue::Size() {
@@ -38,4 +27,13 @@ AVPacket *AVPacketQueue::Pop(const int timeout) {
     int ret = queue_.Pop(tmp_pkt, timeout);
     if (ret < 0) return nullptr;
     return tmp_pkt;
+}
+
+void AVPacketQueue::release() {
+    while (true) {
+        AVPacket *pkt = nullptr;
+        int ret = queue_.Pop(pkt, 1);
+        if (ret < 0) break;
+        else av_packet_free(&pkt);
+    }
 }

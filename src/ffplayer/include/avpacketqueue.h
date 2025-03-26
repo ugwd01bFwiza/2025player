@@ -14,12 +14,12 @@ public:
     AVPacketQueue() {}
     ~AVPacketQueue() {}
     void Abort();
-    void Release();
     int Size();
     int Push(AVPacket *pkt);
     AVPacket *Pop(const int timeout);
 
 private:
+    void release();
     Queue<AVPacket *> queue_;
 };
 

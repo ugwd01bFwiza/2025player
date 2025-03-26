@@ -19,6 +19,10 @@ public:
     int Stop();
     void Run();
 
+    AVCodecParameters *AudioCodecParameters();
+    AVCodecParameters *VideoCodecParameters();
+    AVCodecParameters *SubtitleCodecParameters();
+
 private:
     std::string url_; 
 

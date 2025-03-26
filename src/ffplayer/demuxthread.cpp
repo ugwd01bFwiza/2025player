@@ -54,6 +54,11 @@ void DemuxThread::Run() {
     AVPacket pkt;
 
     while (!abort_) {
+        if (audio_queue_->Size() > 100 || video_queue_->Size() > 100) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            continue;
+        }
+
         ret = av_read_frame(format_ctx_, &pkt);
         if (ret < 0) break;
     }
@@ -63,7 +68,6 @@ void DemuxThread::Run() {
     }
     else if (pkt.stream_index == video_index_) {
         video_queue_->Push(&pkt);
-     // video
     }
     // else if (pkt.stream_index == subtitle_index_) {
     //  // subtitle
@@ -73,4 +77,19 @@ void DemuxThread::Run() {
     }
 
     av_packet_unref(&pkt);
+}
+
+AVCodecParameters *DemuxThread::AudioCodecParameters() {
+    if (audio_index_ < 0) return NULL;
+    return format_ctx_->streams[audio_index_]->codecpar;
+}
+
+AVCodecParameters *DemuxThread::VideoCodecParameters() {
+    if (video_index_ < 0) return NULL;
+    return format_ctx_->streams[video_index_]->codecpar;
+}
+
+AVCodecParameters *DemuxThread::SubtitleCodecParameters() {
+    if (subtitle_index_ < 0) return NULL;
+    return format_ctx_->streams[subtitle_index_]->codecpar;
 }
