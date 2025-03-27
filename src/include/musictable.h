@@ -1,6 +1,7 @@
 ///所有的多媒体文件都在这里展示,page目前存储了音视频页面
 #ifndef MEDIATABLE_H
 #define MEDIATABLE_H
+#include "videoplayer.h"
 #include"musicplayer.h"
 #include"pathselector.h"
 #include<QDir>
@@ -43,6 +44,8 @@
      QStandardItemModel*historyListModel;
      int windowsWidth=0;
 
+     VideoPlayer *videoPlayer;
+     void playVideo(const QString &url);
 
        void addmusic(const MetaData& music);
      void onResetWindowSize(int width);
@@ -66,6 +69,7 @@
      void onBtPlayAll();
      // void bt_selectDir();
      void onSearchTextChange(QString text);
+     void onVideoItemDoubleClicked(const QModelIndex &index);
 
  private:
 

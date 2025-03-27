@@ -69,6 +69,17 @@ public:
     void readHistoryList();
 
     void readMusicList( const QString &playListName);
+
+// 在MusicPlayer类中添加以下内容
+public:
+    // 视频相关
+    void playVideo(const QString &url);
+    void loadVideoMetadata(const QString &url, const QString &playListName);
+    
+private:
+    const QString videolist = "videolist";
+    QStringList videoExtensions = {"*.mp4", "*.avi", "*.mkv", "*.mov", "*.flv", "*.wmv"};
+
 private:
     void initConnect();
     QMediaPlayer *player;

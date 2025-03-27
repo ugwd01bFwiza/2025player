@@ -258,16 +258,37 @@ void MusicPlayer::uninstallPath(const QString &filePath) {
     });
 }
 
+// 修改installPath方法以支持视频文件
 void MusicPlayer::installPath(const QString & filePath){
-
     QtConcurrent::run([this, filePath]() {
+        // 处理音乐文件
         initMusicByFilePath(filePath);
         readMusicList(locallist);
+        
+        // 处理视频文件
+        QDir dir(filePath);
+        if (dir.exists()) {
+            QStringList filters = videoExtensions;
+            dir.setNameFilters(filters);
+            QFileInfoList files = dir.entryInfoList();
+            
+            // 确保视频表存在
+            DataBase::instance()->createVideoListNotExist(videolist);
+            
+            for (const QFileInfo& fileInfo : files) {
+                QString videoPath = fileInfo.absoluteFilePath();
+                if (!isUrlInDatabase(DataBase::instance(), videoPath, videolist)) {
+                    loadVideoMetadata(videoPath, videolist);
+                }
+            }
+        }
+        
         QMetaObject::invokeMethod(this, [this]() {
             emit mediaListChanged();
         }, Qt::QueuedConnection);
     });
 }
+
 void MusicPlayer::pause(){
     player->pause();
 }
@@ -341,4 +362,33 @@ void MusicPlayer::initConnect(){
 
     connect(qApp, &QCoreApplication::aboutToQuit, this,&MusicPlayer::onAppAboutToQuit);
     connect(&history, &HistoryList::historyListRemove,this,&MusicPlayer::historyListRemove);
+}
+
+// 添加视频播放方法
+void MusicPlayer::playVideo(const QString &url)
+{
+    if (QFile::exists(url)) {
+        // 视频播放的媒体状态处理将由VideoPlayer类自己处理
+        // 这里主要是为了记录历史
+        QFileInfo fileInfo(url);
+        history.addToHistory(HistoryMData(url, fileInfo.fileName(), 0)); // 视频时长可能需要单独获取
+        emit historyListChange(history.history.first());
+    }
+}
+
+// 添加视频元数据加载方法
+void MusicPlayer::loadVideoMetadata(const QString &url, const QString &playListName)
+{
+    QFileInfo fileInfo(url);
+    QString title = fileInfo.fileName();
+    
+    // 保存到数据库
+    QMap<QString, QString> metaDataMap;
+    metaDataMap.insert("url", url);
+    metaDataMap.insert("title", title);
+    metaDataMap.insert("duration", "0"); // 视频持续时间需要单独获取
+    
+    // 使用默认视频缩略图
+    QPixmap thumbnail(":/asset/image/video_thumbnail.png");
+    DataBase::instance()->saveMetaData(metaDataMap, playListName, thumbnail, 0);
 }

@@ -33,6 +33,10 @@ MusicTable::MusicTable()
     connect(SettingsManager::instance(), &SettingsManager::pathChange, this, &MusicTable::resetVideoTable);
     connect(&MusicPlayer::instance(),&MusicPlayer::historyListChange,this,&MusicTable::addHistoryItem);
     connect(&MusicPlayer::instance(),&MusicPlayer::historyListRemove,this,&MusicTable::loadHistoryTable);
+
+    // 初始化视频播放器
+    videoPlayer = new VideoPlayer();
+    videoPlayer->hide();
 }
 
 void MusicTable::initSource(){
@@ -113,6 +117,9 @@ void MusicTable::initItem()
     playAll->setMinimumSize(100, 40);
     playAll->setObjectName("playallBtn");
     playAll->setIcon(QIcon(":/images/stackWidget/localMusic/btn_playall.png"));
+
+    // 连接视频表格的双击信号
+    connect(video_table, &DListView::doubleClicked, this, &MusicTable::onVideoItemDoubleClicked);
 }
 void MusicTable::loadMusicTable()
 {
@@ -490,4 +497,44 @@ void HistoryTable::mouseDoubleClickEvent(QMouseEvent *event)
 void HistoryTable::play()
 {
     MusicPlayer::instance().play(url);
+}
+
+// 添加视频播放方法
+void MusicTable::playVideo(const QString &url)
+{
+    videoPlayer->playVideo(url);
+    videoPlayer->show();
+    videoPlayer->raise();
+    videoPlayer->activateWindow();
+}
+
+// 处理视频表格的双击事件
+void MusicTable::onVideoItemDoubleClicked(const QModelIndex &index)
+{
+    if (index.isValid()) {
+        // 获取视频文件路径
+        QString fileName = index.data(Qt::DisplayRole).toString();
+        
+        // 查找对应的完整路径
+        QString fullPath;
+        for (const QString &mediaPath : SettingsManager::instance()->paths) {
+            QDir dir(mediaPath);
+            QString potentialPath = dir.absoluteFilePath(fileName);
+            if (QFile::exists(potentialPath)) {
+                fullPath = potentialPath;
+                break;
+            }
+        }
+        
+        // 如果找到文件，播放它
+        if (!fullPath.isEmpty()) {
+            playVideo(fullPath);
+            
+            // 添加到历史记录
+            QFileInfo fileInfo(fullPath);
+            HistoryMData historyItem(fullPath, fileInfo.fileName(), 0); // 视频持续时间可能需要另外获取
+            MusicPlayer::instance().history.addToHistory(historyItem);
+            emit MusicPlayer::instance().historyListChange(historyItem);
+        }
+    }
 }
