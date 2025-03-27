@@ -70,7 +70,6 @@ public:
 
     void readMusicList( const QString &playListName);
 
-// 在MusicPlayer类中添加以下内容
 public:
     // 视频相关
     void playVideo(const QString &url);
