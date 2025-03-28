@@ -3,14 +3,15 @@
 
 #include <QWidget>
 #include <QMediaPlayer>
-#include <QVideoWidget>
+#include <QtMultimediaWidgets/QVideoWidget>
 #include <QVBoxLayout>
 #include <DPushButton>
 #include <DLabel>
-#include "controlbar.h"
+//#include "controlbar.h"
 
 DWIDGET_USE_NAMESPACE
 
+class ControlBar;
 class VideoPlayer : public QWidget
 {
     Q_OBJECT
@@ -19,6 +20,7 @@ public:
     
     void playVideo(const QString &url);
     void toggleFullScreen();
+    QString formatTime(int seconds);
     
 private:
     QMediaPlayer *player;
@@ -32,6 +34,7 @@ private:
 
     void setupUI();
     void connectSignals();
+    void keyPressEvent(QKeyEvent *event);
 
 public slots:
     void onVideoStateChanged(QMediaPlayer::State state);

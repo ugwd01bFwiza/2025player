@@ -1,4 +1,5 @@
 #include "videoplayer.h"
+#include "controlbar.h"
 #include <QFileInfo>
 #include <QKeyEvent>
 #include <QDebug>
@@ -41,7 +42,8 @@ void VideoPlayer::setupUI()
     player->setVideoOutput(videoWidget);
     
     // 设置controlBar的mediaPlayer
-    controlBar->mediaPlayer = player;
+//    controlBar->mediaPlayer = player;
+    connect(player, &QMediaPlayer::stateChanged, controlBar,&ControlBar::stchange);
 }
 
 void VideoPlayer::connectSignals()
@@ -121,4 +123,11 @@ void VideoPlayer::keyPressEvent(QKeyEvent *event)
         toggleFullScreen();
     }
     QWidget::keyPressEvent(event);
+}
+
+QString VideoPlayer::formatTime(int seconds)
+{
+    int min = seconds /60;
+    int sec = seconds %60;
+    return QString("%1:%2").arg(min,2,10,QChar('0')).arg(sec,2,10,QChar('0'));
 }

@@ -1,5 +1,5 @@
 QT += core gui dtkwidget
-QT += multimedia
+QT += multimedia multimediawidgets
 QT += sql
 INCLUDEPATH += /usr/include/taglib 
 
@@ -26,7 +26,8 @@ src/play/database.cpp\
     src/gui/settingsmanager.cpp \
     src/gui/pathselector.cpp\
     src/gui/shortcutmanager.cpp\
-src/gui/settingpage.cpp
+src/gui/settingpage.cpp \
+    src/gui/videoplayer.cpp
 
 RESOURCES += resources.qrc
 INCLUDEPATH += $$PWD/src/include
@@ -41,7 +42,8 @@ src/include/database.h \
     src/include/settingsmanager.h \
     src/include/shortcutmanager.h\
     src/include/pathselector.h\
-src/include/settingpage.h
+src/include/settingpage.h \
+    src/include/videoplayer.h
 DISTFILES +=
 
 debug{

@@ -273,7 +273,7 @@ void MusicPlayer::installPath(const QString & filePath){
             QFileInfoList files = dir.entryInfoList();
             
             // 确保视频表存在
-            DataBase::instance()->createVideoListNotExist(videolist);
+            DataBase::instance()->createPlayListNotExist(videolist);
             
             for (const QFileInfo& fileInfo : files) {
                 QString videoPath = fileInfo.absoluteFilePath();

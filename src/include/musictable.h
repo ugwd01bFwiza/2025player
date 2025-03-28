@@ -20,6 +20,7 @@
 #include<DLineEdit>
 #include<QStackedWidget>
  DWIDGET_USE_NAMESPACE
+ class VideoPlayer;
  class CustomListView;  
  class MusicTable : public QFrame {
      Q_OBJECT

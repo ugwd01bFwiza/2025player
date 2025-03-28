@@ -2,6 +2,7 @@
 #include "pathselector.h"
 #include "musictable.h"
 #include "settingsmanager.h"
+#include "videoplayer.h"
 #include <QVBoxLayout>
 #include <DTableWidget>
 #include <QHeaderView>
