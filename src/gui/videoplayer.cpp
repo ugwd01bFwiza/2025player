@@ -9,9 +9,25 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     player = new QMediaPlayer(this);
     videoWidget = new QVideoWidget(this);
     controlBar = new ControlBar(this);
+    playbackRateComboBox = new DComboBox(this);
     
     setupUI();
+    setupPlaybackRates();
     connectSignals();
+}
+
+void VideoPlayer::setupPlaybackRates()
+{
+    // 添加常用的播放速率
+    playbackRateComboBox->addItem("0.5x", 0.5);
+    playbackRateComboBox->addItem("0.75x", 0.75);
+    playbackRateComboBox->addItem("1.0x", 1.0);
+    playbackRateComboBox->addItem("1.25x", 1.25);
+    playbackRateComboBox->addItem("1.5x", 1.5);
+    playbackRateComboBox->addItem("2.0x", 2.0);
+    
+    // 默认选择1.0x
+    playbackRateComboBox->setCurrentIndex(2);
 }
 
 void VideoPlayer::setupUI()
@@ -20,14 +36,19 @@ void VideoPlayer::setupUI()
     videoWidget->setMinimumSize(640, 360);
     videoWidget->setAspectRatioMode(Qt::KeepAspectRatio);
     
-    // 设置标题和全屏按钮
+    // 设置标题、全屏按钮和倍速下拉框
     titleLabel = new DLabel("视频播放器");
     titleLabel->setAlignment(Qt::AlignCenter);
     
     fullScreenButton = new DPushButton("全屏");
     
+    // 设置倍速下拉框样式和大小
+    playbackRateComboBox->setFixedWidth(80);
+    playbackRateComboBox->setToolTip("播放速度");
+    
     QHBoxLayout *headerLayout = new QHBoxLayout();
     headerLayout->addWidget(titleLabel, 1);
+    headerLayout->addWidget(playbackRateComboBox);
     headerLayout->addWidget(fullScreenButton);
     
     // 主布局
@@ -44,6 +65,10 @@ void VideoPlayer::setupUI()
     // 设置controlBar的mediaPlayer
 //    controlBar->mediaPlayer = player;
     connect(player, &QMediaPlayer::stateChanged, controlBar,&ControlBar::stchange);
+
+    // 设置窗口标题和大小
+    setWindowTitle("视频播放");
+    resize(800, 600);
 }
 
 void VideoPlayer::connectSignals()
@@ -51,6 +76,8 @@ void VideoPlayer::connectSignals()
     connect(fullScreenButton, &DPushButton::clicked, this, &VideoPlayer::toggleFullScreen);
     connect(player, &QMediaPlayer::stateChanged, this, &VideoPlayer::onVideoStateChanged);
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &VideoPlayer::onMediaStatusChanged);
+    connect(playbackRateComboBox, QOverload<int>::of(&DComboBox::currentIndexChanged), 
+            this, &VideoPlayer::onPlaybackRateChanged);
 }
 
 void VideoPlayer::playVideo(const QString &url)
@@ -65,6 +92,15 @@ void VideoPlayer::playVideo(const QString &url)
     }
 }
 
+void VideoPlayer::setPlaybackRate(qreal rate)
+{
+    if (rate > 0) {
+        currentPlaybackRate = rate;
+        player->setPlaybackRate(currentPlaybackRate);
+        qDebug() << "播放速度设置为:" << currentPlaybackRate << "倍";
+    }
+}
+
 void VideoPlayer::toggleFullScreen()
 {
     isFullScreen = !isFullScreen;
@@ -72,6 +108,7 @@ void VideoPlayer::toggleFullScreen()
     if (isFullScreen) {
         // 隐藏控件，只显示视频
         titleLabel->hide();
+        playbackRateComboBox->hide();
         fullScreenButton->hide();
         controlBar->hide();
         setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
@@ -84,6 +121,7 @@ void VideoPlayer::toggleFullScreen()
         setWindowFlags(Qt::Widget);
         showNormal();
         titleLabel->show();
+        playbackRateComboBox->show();
         fullScreenButton->show();
         controlBar->show();
         
@@ -96,7 +134,8 @@ void VideoPlayer::onVideoStateChanged(QMediaPlayer::State state)
 {
     // 可以添加状态改变时的处理
     if (state == QMediaPlayer::PlayingState) {
-        // 播放状态
+        // 播放状态 - 确保保持设定的倍速
+        player->setPlaybackRate(currentPlaybackRate);
     } else if (state == QMediaPlayer::PausedState) {
         // 暂停状态
     } else if (state == QMediaPlayer::StoppedState) {
@@ -107,8 +146,9 @@ void VideoPlayer::onVideoStateChanged(QMediaPlayer::State state)
 void VideoPlayer::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
     if (status == QMediaPlayer::LoadedMedia) {
-        // 媒体加载完成后自动播放
+        // 媒体加载完成后自动播放并设置倍速
         player->play();
+        player->setPlaybackRate(currentPlaybackRate);
         
         // 设置控制栏
         controlBar->processSlider->setMaximum(player->duration() / 1000);
@@ -117,10 +157,29 @@ void VideoPlayer::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
     }
 }
 
+void VideoPlayer::onPlaybackRateChanged(int index)
+{
+    // 获取选择的倍速值
+    qreal rate = playbackRateComboBox->itemData(index).toDouble();
+    setPlaybackRate(rate);
+}
+
 void VideoPlayer::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape && isFullScreen) {
         toggleFullScreen();
+    } else if (event->key() == Qt::Key_Plus || event->key() == Qt::Key_Equal) {
+        // 加号键增加播放速度
+        int currentIndex = playbackRateComboBox->currentIndex();
+        if (currentIndex < playbackRateComboBox->count() - 1) {
+            playbackRateComboBox->setCurrentIndex(currentIndex + 1);
+        }
+    } else if (event->key() == Qt::Key_Minus) {
+        // 减号键减小播放速度
+        int currentIndex = playbackRateComboBox->currentIndex();
+        if (currentIndex > 0) {
+            playbackRateComboBox->setCurrentIndex(currentIndex - 1);
+        }
     }
     QWidget::keyPressEvent(event);
 }
